@@ -1,3 +1,5 @@
+/// # Arguments in Vector
+/// interval
 pub fn check_interval() -> impl Fn(Vec<i64>, i8, u64, i8, u64) -> bool {
     |args: Vec<i64>, a_pitch: i8, _a_dur: u64, b_pitch: i8, _b_dur: u64| {
         if a_pitch == -1 || b_pitch == -1 {
@@ -6,6 +8,9 @@ pub fn check_interval() -> impl Fn(Vec<i64>, i8, u64, i8, u64) -> bool {
         b_pitch - a_pitch == args[0] as i8 //interval
     }
 }
+
+/// # Arguments in Vector
+/// interval, lower_limit, upper_limit
 pub fn check_interval_in_range() -> impl Fn(Vec<i64>, i8, u64, i8, u64) -> bool {
     |args: Vec<i64>, a_pitch: i8, _a_dur: u64, b_pitch: i8, _b_dur: u64| {
         if a_pitch == -1 || b_pitch == -1 {

@@ -1,4 +1,3 @@
-#[allow(unused_imports)]
 #[allow(dead_code)]
 extern crate rand;
 use rand::seq::SliceRandom;
@@ -13,10 +12,9 @@ pub fn replace_by_closures(
     replace_fn: Box<dyn Fn(Vec<i64>, i8, u64, i8, u64) -> (Vec<i8>, Vec<u64>)>,
     replace_args: Vec<i64>,
 ) {
-    //let mut initial_time = 0;
-    //for _ in 0..2 {
+    
     let mut index = 0;
-    let mut limit = pitches.len() - 1; // because it ends to the second last
+    let mut limit = pitches.len() - 1; // because it ends to the second last note
     while index < limit {
         let ch_args = check_args.clone();
         //println!("index: {}", index);
@@ -35,20 +33,16 @@ pub fn replace_by_closures(
             limit -= 1;
             limit += new_len;
             // println!("limit {}", limit);
-            // if new_len == 2 {
-            //     index -= 1;
-            // }
+            
             index += new_len;
         // println!("index {}", index);
         } else {
             index += 1;
-            //initial_time += a_dur;
         }
     }
-    //}
 }
 pub fn assign_concrete_pitches(pairs: Vec<[i32; 2]>, lowest_limit: u32) -> Vec<i8> {
-    //(0..pairs.len()).map(|i| pairs[i][0]  + pairs[i][1]*12 + down_limit).collect::<Vec<u32>>()
+    //(0..pairs.len()).map(|i| pairs[i][0]  + pairs[i][1]*12 + lowest_limit).collect::<Vec<u32>>()
     pairs
         .iter()
         .map(|pair| {

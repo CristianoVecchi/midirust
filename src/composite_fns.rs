@@ -1,5 +1,9 @@
 use crate::checking_fns::*;
 use crate::replacing_fns::*;
+
+/// # Arguments in Vectors
+/// Check Args: interval -------
+/// Replace Args: interval_time, difference (interval)
 pub fn gliss_on_interval(
     check_args: Vec<i64>,
     replace_args: Vec<i64>,
@@ -15,10 +19,10 @@ pub fn gliss_on_interval(
         (Box::new(replace_gliss()), replace_args),
     )
 }
-/**
- * check args: interval, lower limit, upper limit
- * replace args: interval_time, first interval note
- */
+
+/// # Arguments in Vectors
+/// Check Args: interval, lower_limit, upper_limit
+/// Replace Args: interval_time, initial_direction (interval)
 pub fn group_on_interval_in_range(
     check_args: Vec<i64>,
     replace_args: Vec<i64>,
@@ -34,10 +38,10 @@ pub fn group_on_interval_in_range(
         (Box::new(replace_group()), replace_args),
     )
 }
-/**
- *check args: interval
- *replace args: interval_time
- */
+
+/// # Arguments in Vectors
+/// Check Args: interval -------
+/// Replace Args: interval_time
 pub fn trill_on_interval(
     check_args: Vec<i64>,
     replace_args: Vec<i64>,
@@ -53,10 +57,10 @@ pub fn trill_on_interval(
         (Box::new(replace_trill()), replace_args),
     )
 }
-/**
-*check args: interval
-*replace args: interval time, grace note interval from the first note, grace note interval time
-*/
+
+/// # Arguments in Vectors
+/// Check Args: interval -------
+/// Replace Args: interval_time, glissnote_interval (from the 1st note), gracenote_duration
 pub fn gracenote_on_interval(
     check_args: Vec<i64>,
     replace_args: Vec<i64>,
@@ -72,10 +76,9 @@ pub fn gracenote_on_interval(
         (Box::new(replace_gracenote()), replace_args),
     )
 }
-/**
-*check args: interval
-*replace args: interval time, gliss note interval time
-*/
+/// # Arguments in Vectors
+/// Check Args: interval -------
+/// Replace Args: interval_time, glissnote_duration
 pub fn approachgliss_on_interval(
     check_args: Vec<i64>,
     replace_args: Vec<i64>,

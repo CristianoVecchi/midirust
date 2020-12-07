@@ -15,31 +15,44 @@ mod multisequences; use multisequences::*;
 use std::path::Path;
 use std::time::Instant;
 
-
+/// WARNING: Change this notice for your own compositions!
+const COPYRIGHT_NOTICE: &str = "Copyright2020 by Cristiano Vecchi";
+/// the target PATH where the midi file will be created
 const RUSTMIDI_TEST_PATH: &str = "/home/cris/Desktop/";
 const _RUSTMIDI_TEST: &str = "/home/cris/Desktop/RUSTMIDI_TEST.MID";
 const _SINGLE_NOTE: &str = "/home/cris/Desktop/singleNote.mid";
 const _BACH_BRAND1: &str = "/home/cris/Desktop/BACH_BRAND1.mid";
 const _GENIUS1: &str = "/home/cris/Desktop/Genius1.mid";
 const _BACH_INVENTIO1: &str = "/home/cris/Desktop/bach_inventio1.mid";
+
+/// options: generates a SoloSequence or a MultiSequence 
+/// choosing among the available ones in the related files 
+/// (solosequences.rs and multisequences.rs)
 fn main() {
     let start = Instant::now();
     //let solosequence = "TheAloneLocrio";
-    // let solosequence = "TestingFunctions";
-    // write_solosequence(get_solosequence(solosequence));
+    //let solosequence = "TestingFunctions";
+    //write_solosequence(get_solosequence(solosequence));
     let multisequence = "MultiSequenceTEST";
     write_multisequence(get_multisequence(multisequence));
    
     let elapsed = start.elapsed();
     println!("Midifile created in {} milliseconds", elapsed.as_millis());
 }
-
-// 1_000_000 microseconds == 1 second
+/// 1_000_000 microseconds == 1 second
+/// # Arguments
+/// 'bpm' - beats per minute, converts the metronome signature to microseconds
 fn bpm_to_microseconds(bpm: u32) -> u32 {
     // 1_000_000 : 60 = x : 1/bpm
     (1_000_000 / bpm) * 60
 }
 
+/// Creates a MidiFile with Track 0 as Header, Tracks 1toN as instruments on channel N-1.
+/// If are present, 
+/// some values in the MultiSequence instance 
+/// override the SoloSequence ones (intruments, velocities, 
+/// transpositions will not be made if the value is missing).
+/// 'const RUSTMIDI_TEST_PATH' is the target directory.
 fn write_multisequence(mseq: MultiSequence) {
     let mut builder = SMFBuilder::new();
     builder.add_track();
@@ -51,7 +64,7 @@ fn write_multisequence(mseq: MultiSequence) {
     set_header(
         &mut builder,
         0,
-        Some(String::from("Copyright2020 by Cristiano Vecchi")),
+        Some(String::from(COPYRIGHT_NOTICE)),
         Some(String::from(mseq.title)),
         Some(instrument_names),
         Some(bpm_to_microseconds(mseq.bpm)), // micro_second (1_000_000 of a second) in a quarter note (q=60)
@@ -145,6 +158,9 @@ fn write_multisequence(mseq: MultiSequence) {
 
 }
 
+/// Creates a MidiFile with Track 0 as Header, Tracks 1 as Solo Instrument on channel 0.
+/// If 'figures' Vector is empty, generates a flux of notes with the same duration (interval_time).
+/// 'const RUSTMIDI_TEST_PATH' is the target directory.
 fn write_solosequence(seq: SoloSequence) {
     let mut builder = SMFBuilder::new();
     builder.add_track(); // header track
@@ -152,7 +168,7 @@ fn write_solosequence(seq: SoloSequence) {
     set_header(
         &mut builder,
         0,
-        Some(String::from("Copyright2020 by Cristiano Vecchi")),
+        Some(String::from(COPYRIGHT_NOTICE)),
         Some(String::from(seq.title)),
         Some(vec![
             String::from("Globals"),
@@ -230,7 +246,7 @@ fn write_solosequence(seq: SoloSequence) {
 }
 
 
-#[allow(dead_code)]
+/// MidiFile dumping function on terminal
 fn _read_file(path: &str) {
     println!("Reading: {}", path);
     match SMF::from_file(&Path::new(&path[..])) {
