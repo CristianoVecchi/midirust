@@ -1,0 +1,25 @@
+pub fn check_interval() -> impl Fn(Vec<i64>, i8, u64, i8, u64) -> bool {
+    |args: Vec<i64>, a_pitch: i8, _a_dur: u64, b_pitch: i8, _b_dur: u64| {
+        if a_pitch == -1 || b_pitch == -1 {
+            return false;
+        }
+        b_pitch - a_pitch == args[0] as i8 //interval
+    }
+}
+pub fn check_interval_in_range() -> impl Fn(Vec<i64>, i8, u64, i8, u64) -> bool {
+    |args: Vec<i64>, a_pitch: i8, _a_dur: u64, b_pitch: i8, _b_dur: u64| {
+        if a_pitch == -1 || b_pitch == -1 {
+            return false;
+        }
+        let lower_limit = args[1] as i8;
+        let upper_limit = args[2] as i8;
+        if a_pitch < lower_limit
+            || a_pitch > upper_limit
+            || b_pitch < lower_limit
+            || b_pitch > upper_limit
+        {
+            return false;
+        }
+        b_pitch - a_pitch == args[0] as i8 //interval
+    }
+}

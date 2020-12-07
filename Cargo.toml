@@ -1,0 +1,10 @@
+[package]
+name = "midirust"
+version = "0.1.0"
+authors = ["Cristiano Vecchi"]
+edition = "2018"
+
+[dependencies]
+rand = "0.7.3"
+[dependencies.rimd]
+git = "https://github.com/RustAudio/rimd.git"
