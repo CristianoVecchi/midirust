@@ -24,6 +24,7 @@ const _SINGLE_NOTE: &str = "/home/cris/Desktop/singleNote.mid";
 const _BACH_BRAND1: &str = "/home/cris/Desktop/BACH_BRAND1.mid";
 const _GENIUS1: &str = "/home/cris/Desktop/Genius1.mid";
 const _BACH_INVENTIO1: &str = "/home/cris/Desktop/bach_inventio1.mid";
+// RUN: Ctrl+Shift+B
 
 /// options: generates a SoloSequence or a MultiSequence 
 /// choosing among the available ones in the related files 
@@ -50,7 +51,7 @@ fn bpm_to_microseconds(bpm: u32) -> u32 {
 /// Creates a MidiFile with Track 0 as Header, Tracks 1toN as instruments on channel N-1.
 /// If are present, 
 /// some values in the MultiSequence instance 
-/// override the SoloSequence ones (intruments, velocities, 
+/// override the SoloSequence ones (intruments, velocities, bpm, title, interval_time,
 /// transpositions will not be made if the value is missing).
 /// 'const RUSTMIDI_TEST_PATH' is the target directory.
 fn write_multisequence(mseq: MultiSequence) {

@@ -21,7 +21,7 @@ pub fn gliss_on_interval(
 }
 
 /// # Arguments in Vectors
-/// Check Args: interval, lower_limit, upper_limit
+/// Check Args: interval, lower_limit, upper_limit, interval_time
 /// Replace Args: interval_time, initial_direction (interval)
 pub fn group_on_interval_in_range(
     check_args: Vec<i64>,
@@ -34,13 +34,13 @@ pub fn group_on_interval_in_range(
     ),
 ) {
     (
-        (Box::new(check_interval_in_range()), check_args),
+        (Box::new(check_interval_in_range_and_duration()), check_args),
         (Box::new(replace_group()), replace_args),
     )
 }
 
 /// # Arguments in Vectors
-/// Check Args: interval -------
+/// Check Args: interval, interval_time -------
 /// Replace Args: interval_time
 pub fn trill_on_interval(
     check_args: Vec<i64>,
@@ -53,14 +53,14 @@ pub fn trill_on_interval(
     ),
 ) {
     (
-        (Box::new(check_interval()), check_args),
+        (Box::new(check_interval_and_duration()), check_args),
         (Box::new(replace_trill()), replace_args),
     )
 }
 
 /// # Arguments in Vectors
-/// Check Args: interval -------
-/// Replace Args: interval_time, glissnote_interval (from the 1st note), gracenote_duration
+/// Check Args: interval, interval_time -------
+/// Replace Args: glissnote_interval (from the 1st note), gracenote_duration
 pub fn gracenote_on_interval(
     check_args: Vec<i64>,
     replace_args: Vec<i64>,
@@ -72,13 +72,13 @@ pub fn gracenote_on_interval(
     ),
 ) {
     (
-        (Box::new(check_interval()), check_args),
+        (Box::new(check_interval_and_duration()), check_args),
         (Box::new(replace_gracenote()), replace_args),
     )
 }
 /// # Arguments in Vectors
-/// Check Args: interval -------
-/// Replace Args: interval_time, glissnote_duration
+/// Check Args: interval, interval_time -------
+/// Replace Args: glissnote_duration
 pub fn approachgliss_on_interval(
     check_args: Vec<i64>,
     replace_args: Vec<i64>,
@@ -90,7 +90,7 @@ pub fn approachgliss_on_interval(
     ),
 ) {
     (
-        (Box::new(check_interval()), check_args),
+        (Box::new(check_interval_and_duration()), check_args),
         (Box::new(replace_approachgliss()), replace_args),
     )
 }
