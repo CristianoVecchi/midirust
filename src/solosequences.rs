@@ -12,8 +12,12 @@ pub fn get_solosequence(ss_title: &str) -> SoloSequence {
             instrument: 74, //74 = RECORDER
             velocity: 100,
             abstract_notes: vec![
-                -1, 0, 0, 0, 0, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 5, 5, 5, 5, 6, 7, 7, 7, 7, 9, 9,
-                9, 9, 9, 10, 10, 10, 10, 10, 11,
+                // REST, UNISON, UNISON, UNISON, UNISON,MAJ_2, MAJ_2, MAJ_2, MAJ_2, MAJ_2, 
+                // MIN_3, MIN_3,MIN_3,MIN_3,MIN_3,MAJ_3, P_4, P_4, P_4, P_4, AUM_4, P_5, P_5, P_5, P_5, MAJ_6, MAJ_6, MAJ_6, MAJ_6, MIN_7, MIN_7, MIN_7, MIN_7, MIN_7, MAJ_7
+                //the same scale in halftone numbers:
+                -1, 0, 0, 0, 0, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 
+                4, 5, 5, 5, 5, 6, 7, 7, 7, 7, 
+                9, 9, 9, 9, 10, 10, 10, 10, 10, 11,
             ],
             octaves: vec![2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4],
             figures: vec![1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 5, 6],
@@ -21,29 +25,29 @@ pub fn get_solosequence(ss_title: &str) -> SoloSequence {
             interval_time: SIXTEENTH as u64, // 60 = 1/32
             bpm: 108,
             check_n_replace: vec![
-                (trill_on_interval(vec![2, SIXTEENTH], vec![SIXTEENTH])),
-                (trill_on_interval(vec![1, SIXTEENTH], vec![SIXTEENTH])),
-                (approachgliss_on_interval(vec![8, SIXTEENTH], vec![SIXTY_FOURTH / 2])),
-                (approachgliss_on_interval(vec![9, SIXTEENTH], vec![SIXTY_FOURTH / 2])),
-                (approachgliss_on_interval(vec![10, SIXTEENTH], vec![SIXTY_FOURTH / 2])),
-                (approachgliss_on_interval(vec![11,SIXTEENTH], vec![SIXTY_FOURTH / 2])),
-                (approachgliss_on_interval(vec![-8,SIXTEENTH], vec![SIXTY_FOURTH / 2])),
-                (approachgliss_on_interval(vec![-9,SIXTEENTH], vec![SIXTY_FOURTH / 2])),
-                (approachgliss_on_interval(vec![-10,SIXTEENTH], vec![SIXTY_FOURTH / 2])),
-                (approachgliss_on_interval(vec![-11,SIXTEENTH], vec![SIXTY_FOURTH / 2])),
-                (approachgliss_on_interval(vec![6,SIXTEENTH], vec![SIXTY_FOURTH / 2])),
-                (approachgliss_on_interval(vec![-6,SIXTEENTH], vec![SIXTY_FOURTH / 2])),
-                (approachgliss_on_interval(vec![5,SIXTEENTH], vec![SIXTY_FOURTH / 2])),
-                (approachgliss_on_interval(vec![-5,SIXTEENTH], vec![SIXTY_FOURTH / 2])),
-                (gracenote_on_interval(vec![7,SIXTEENTH], vec![6, SIXTY_FOURTH / 2])),
-                (gracenote_on_interval(vec![4,SIXTEENTH], vec![3, SIXTY_FOURTH / 2])),
-                (gracenote_on_interval(vec![-7,SIXTEENTH], vec![-4, SIXTY_FOURTH])),
-                (gracenote_on_interval(vec![-3,SIXTEENTH], vec![-1, SIXTY_FOURTH])),
-                (gracenote_on_interval(vec![-2,SIXTEENTH], vec![-1, THIRTY_SECOND])),
-                (group_on_interval_in_range(vec![0, 1, 90,SIXTEENTH], vec![SIXTEENTH, 1])),
-                (gracenote_on_interval(vec![0,SIXTEENTH], vec![-1, SIXTY_FOURTH / 2])),
-                (gracenote_on_interval(vec![0,SIXTEENTH], vec![-2, SIXTY_FOURTH / 2])),
-                (gracenote_on_interval(vec![0,SIXTEENTH], vec![-3, SIXTY_FOURTH / 2])),
+                (trill_on_interval(vec![MAJ_2, SIXTEENTH], vec![SIXTEENTH])),
+                (trill_on_interval(vec![MIN_2, SIXTEENTH], vec![SIXTEENTH])),
+                (approachgliss_on_interval(vec![MIN_6, SIXTEENTH], vec![SIXTY_FOURTH / 2])),
+                (approachgliss_on_interval(vec![MAJ_6, SIXTEENTH], vec![SIXTY_FOURTH / 2])),
+                (approachgliss_on_interval(vec![MIN_7, SIXTEENTH], vec![SIXTY_FOURTH / 2])),
+                (approachgliss_on_interval(vec![MAJ_7,SIXTEENTH], vec![SIXTY_FOURTH / 2])),
+                (approachgliss_on_interval(vec![-MIN_6,SIXTEENTH], vec![SIXTY_FOURTH / 2])),
+                (approachgliss_on_interval(vec![-MAJ_6,SIXTEENTH], vec![SIXTY_FOURTH / 2])),
+                (approachgliss_on_interval(vec![-MIN_7,SIXTEENTH], vec![SIXTY_FOURTH / 2])),
+                (approachgliss_on_interval(vec![-MAJ_7,SIXTEENTH], vec![SIXTY_FOURTH / 2])),
+                (approachgliss_on_interval(vec![AUM_4,SIXTEENTH], vec![SIXTY_FOURTH / 2])),
+                (approachgliss_on_interval(vec![-AUM_4,SIXTEENTH], vec![SIXTY_FOURTH / 2])),
+                (approachgliss_on_interval(vec![P_4,SIXTEENTH], vec![SIXTY_FOURTH / 2])),
+                (approachgliss_on_interval(vec![-P_4,SIXTEENTH], vec![SIXTY_FOURTH / 2])),
+                (gracenote_on_interval(vec![P_5, SIXTEENTH], vec![AUM_4, SIXTY_FOURTH / 2])),
+                (gracenote_on_interval(vec![MAJ_3, SIXTEENTH], vec![MIN_3, SIXTY_FOURTH / 2])),
+                (gracenote_on_interval(vec![-P_5,SIXTEENTH], vec![-MAJ_3, SIXTY_FOURTH])),
+                (gracenote_on_interval(vec![-MIN_3,SIXTEENTH], vec![-MIN_2, SIXTY_FOURTH])),
+                (gracenote_on_interval(vec![-MAJ_2,SIXTEENTH], vec![-MIN_2, THIRTY_SECOND])),
+                (group_on_interval_in_range(vec![UNISON, 1, 90,SIXTEENTH], vec![SIXTEENTH, 1])),
+                (gracenote_on_interval(vec![UNISON,SIXTEENTH], vec![-MIN_2, SIXTY_FOURTH / 2])),
+                (gracenote_on_interval(vec![UNISON,SIXTEENTH], vec![-MAJ_2, SIXTY_FOURTH / 2])),
+                (gracenote_on_interval(vec![UNISON,SIXTEENTH], vec![-MIN_3, SIXTY_FOURTH / 2])),
             ],
         },
         SoloSequence {
@@ -73,12 +77,14 @@ pub fn get_solosequence(ss_title: &str) -> SoloSequence {
                 
                 (gliss_on_interval(vec![3], vec![EIGHTH, 1])),
                 (gliss_on_interval(vec![-3], vec![EIGHTH, -1])), //
-                // (replace_on_interval(vec![-3], vec![60,-1])), //
+                
+                // avoiding the composite functions
                 (
                     (Box::new(check_interval_and_duration()), vec![2, EIGHTH]),
                     (Box::new(replace_trill()), vec![EIGHTH]),
                 ),
                 
+                // Closures could be created ad hoc with Box::new(||{})
                 // (
                 //     (
                 //         // check function
@@ -119,12 +125,7 @@ pub fn get_solosequence(ss_title: &str) -> SoloSequence {
             bpm: 90,
             check_n_replace: vec![],
         },
-    ]; // end of Vec of SoloSequences
-       // solosequences.iter().map(|ss| {
-       //     if ss.name == ss_name {
-       //         return ss;
-       //     }
-       // });
+    ]; 
     solosequences.retain(|ss| ss.title == ss_title);
     solosequences.remove(0)
 }
