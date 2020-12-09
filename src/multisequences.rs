@@ -5,7 +5,7 @@ pub struct MultiSequence<'a> {
     pub transpose: Vec<i8>,
     pub instruments: Vec<u8>,
     pub velocities: Vec<u8>,
-    pub interval_time: u64,
+    pub interval_time: u32,
     pub bpm: u32,
     pub solosequences: Vec<SoloSequence<'a>>,
 }
@@ -15,7 +15,7 @@ pub fn get_multisequence(ms_title: &str) -> MultiSequence {
         transpose: vec![12, 0, -12],
         instruments: vec![73, 71, 70], // Fl, Cl, Bsn
         velocities: vec![105, 90, 97],
-        interval_time: SIXTEENTH as u64,
+        interval_time: SIXTEENTH as u32,
         bpm: 36, // QUARTERS in a minute
         solosequences: vec![
             get_solosequence("PastoralSolo"),

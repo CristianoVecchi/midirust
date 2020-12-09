@@ -120,10 +120,10 @@ fn write_multisequence(mseq: MultiSequence) {
                 .iter()
                 .map(|array| [array[0], array[1]])
                 .collect::<Vec<[i32; 2]>>();
-            let mut durations = result
+            let mut durations = result 
                 .iter()
-                .map(|array| array[2] as u64 * interval)
-                .collect::<Vec<u64>>();
+                .map(|array| array[2] as u32 * interval)
+                .collect::<Vec<u32>>();
             let mut pitches = assign_concrete_pitches_transposing(pairs, 24, transpose);
             if sseq.check_n_replace.len() != 0 {
                 for c_n_r in sseq.check_n_replace {
@@ -211,8 +211,8 @@ fn write_solosequence(seq: SoloSequence) {
             .collect::<Vec<[i32; 2]>>();
         let mut durations = result_triples
             .iter()
-            .map(|array| array[2] as u64 * interval)
-            .collect::<Vec<u64>>();
+            .map(|array| array[2] as u32 * interval)
+            .collect::<Vec<u32>>();
         let mut pitches = assign_concrete_pitches(pairs, 24);
         if seq.check_n_replace.len() != 0 {
             for c_n_r in seq.check_n_replace {

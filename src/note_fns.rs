@@ -6,11 +6,11 @@ use rimd::{MetaEvent, MidiMessage, SMFBuilder};
 
 pub fn replace_by_closures(
     pitches: &mut Vec<i8>,
-    durations: &mut Vec<u64>,
-    check_fn: Box<dyn Fn(Vec<i64>, i8, u64, i8, u64) -> bool>,
-    check_args: Vec<i64>,
-    replace_fn: Box<dyn Fn(Vec<i64>, i8, u64, i8, u64) -> (Vec<i8>, Vec<u64>)>,
-    replace_args: Vec<i64>,
+    durations: &mut Vec<u32>,
+    check_fn: Box<dyn Fn(Vec<i32>, i8, u32, i8, u32) -> bool>,
+    check_args: Vec<i32>,
+    replace_fn: Box<dyn Fn(Vec<i32>, i8, u32, i8, u32) -> (Vec<i8>, Vec<u32>)>,
+    replace_args: Vec<i32>,
 ) {
     
     let mut index = 0;
@@ -133,11 +133,11 @@ pub fn matrix2d_rnd_generator(iter: u32, xs: &mut Vec<i32>, ys: &mut Vec<i32>) -
 pub fn add_notes_and_durations(
     builder: &mut SMFBuilder,
     track: usize,
-    initial_time: u64,
+    initial_time: u32,
     pitches: Vec<i8>,
     velocity: u8,
     channel: u8,
-    durations: Vec<u64>,
+    durations: Vec<u32>,
 ) {
     let mut initial_time = initial_time;
     for (i, p) in pitches.iter().enumerate() {
@@ -148,12 +148,12 @@ pub fn add_notes_and_durations(
         }
         builder.add_midi_abs(
             track,                                             // Track number
-            initial_time,                                              // absolute initial_time
+            initial_time as u64,                                              // absolute initial_time
             MidiMessage::note_on(*p as u8, velocity, channel), // MIDI_MESSAGE: pitch, velocity, channel
         );
         builder.add_midi_abs(
             track,                                              // Track number
-            initial_time + durations[i],                                // absolute initial_time
+            (initial_time + durations[i]) as u64,                                // absolute initial_time
             MidiMessage::note_off(*p as u8, velocity, channel), // pitch, velocity, channel
         );
         initial_time += durations[i];
@@ -164,11 +164,11 @@ pub fn add_notes_and_durations(
 pub fn add_notes(
     builder: &mut SMFBuilder,
     track: usize,
-    initial_time: u64,
+    initial_time: u32,
     pitches: Vec<i8>,
     velocity: u8,
     channel: u8,
-    interval_time: u64,
+    interval_time: u32,
 ) {
     let mut initial_time = initial_time;
     for p in pitches {
@@ -179,12 +179,12 @@ pub fn add_notes(
         }
         builder.add_midi_abs(
             track,                                            // Track number
-            initial_time,                                             // absolute initial_time
+            initial_time as u64,                                             // absolute initial_time
             MidiMessage::note_on(p as u8, velocity, channel), // MIDI_MESSAGE: pitch, velocity, channel
         );
         builder.add_midi_abs(
             track,                                             // Track number
-            initial_time + interval_time,                              // absolute initial_time
+            (initial_time + interval_time) as u64,                              // absolute initial_time
             MidiMessage::note_off(p as u8, velocity, channel), // pitch, velocity, channel
         );
         initial_time += interval_time;
@@ -192,7 +192,7 @@ pub fn add_notes(
     }
 }
 
-// bpm = microseconds/quarter note (u64)
+// bpm = microseconds/quarter note (u32)
 // time_signature: data 0 + 1 = x/y (2*pow(y)), data 2 = metronome clicks, data 3 = n. of 32nd notes in a quarter note
 // numerator: u8, denominator: u8, clocks_per_tick: u8(DEFAULT=96), num_32nd_notes_per_24_clocks: u8(DEFAULT=8)
 // denominator 1=2, 2=4, 3=8, 4=16, 5=32, 6=64
@@ -200,7 +200,7 @@ pub fn add_notes(
 // key signature: i8 -> number of sharps(+)/flats(-), i8 -> 0 = Major | 1 = minor | _ = Invalid
 pub fn set_header(
     builder: &mut SMFBuilder,
-    initial_time: u64,
+    initial_time: u32,
     copyright: Option<String>,
     sequence_title: Option<String>,
     instrument_names: Option<Vec<String>>,
@@ -209,12 +209,12 @@ pub fn set_header(
     key_signature: Option<[u8; 2]>,
 ) {
     match copyright {
-        Some(cop) => builder.add_meta_abs(0, initial_time, MetaEvent::copyright_notice(cop.clone())),
+        Some(cop) => builder.add_meta_abs(0, initial_time as u64, MetaEvent::copyright_notice(cop.clone())),
         None => (),
     }
     match sequence_title {
         Some(name) => {
-            builder.add_meta_abs(0, initial_time, MetaEvent::sequence_or_track_name(name.clone()))
+            builder.add_meta_abs(0, initial_time as u64, MetaEvent::sequence_or_track_name(name.clone()))
         }
         None => (),
     }
@@ -224,19 +224,19 @@ pub fn set_header(
                 if i == builder.num_tracks() {
                     break;
                 };
-                builder.add_meta_abs(i, initial_time, MetaEvent::instrument_name(name.clone()))
+                builder.add_meta_abs(i, initial_time as u64, MetaEvent::instrument_name(name.clone()))
             }
         }
         None => (),
     }
     match bpm {
-        Some(bpm) => builder.add_meta_abs(0, initial_time, MetaEvent::tempo_setting(bpm)),
+        Some(bpm) => builder.add_meta_abs(0, initial_time as u64, MetaEvent::tempo_setting(bpm)),
         None => (),
     }
     match time_signature {
         Some(time_signature) => builder.add_meta_abs(
             0,
-            initial_time,
+            initial_time as u64,
             MetaEvent::time_signature(
                 time_signature[0],
                 time_signature[1],
@@ -249,7 +249,7 @@ pub fn set_header(
     match key_signature {
         Some(key_signature) => builder.add_meta_abs(
             0,
-            initial_time,
+            initial_time as u64,
             MetaEvent::key_signature(key_signature[0], key_signature[1]),
         ),
         None => (),
