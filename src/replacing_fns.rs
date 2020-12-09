@@ -1,4 +1,38 @@
 /// # Arguments in Vector
+/// interval_time, num_repetitions (in a interval_time),  
+/// staccato_dur (1 to 12, 1=staccatissimo, 12=legato), 
+/// interval[0], interval[1], interval[2] etc...
+pub fn replace_tremolopattern() -> impl Fn(Vec<i32>, i8, u32, i8, u32) -> (Vec<i8>, Vec<u32>) {
+    |args: Vec<i32>, a_pitch: i8, a_dur: u32, _b_pitch: i8, _b_dur: u32| {
+        let interval_time = args[0] as u32;
+        let a_qdur = a_dur / interval_time;
+        let num_repetitions = args[1] as u32;
+        let tremolonote_dur  = interval_time / num_repetitions;
+        let tremolonotestaccato_dur = (tremolonote_dur / 12) * args[2] as u32;
+        let microrest_dur = tremolonote_dur - tremolonotestaccato_dur;
+        let pattern_length = args.len()- 3;
+        //let used_xs = (0..xs.len()).map(|i| false).collect::<Vec<bool>>();
+        let pattern_pitches = (0..pattern_length).map(|i|a_pitch + args[i+3] as i8).collect::<Vec<i8>>();
+        let mut pitches = vec![];
+        let mut durs = vec![];
+        if microrest_dur == 0 { // no staccato, no microrests
+            for i in 0..(a_qdur * num_repetitions) {
+                pitches.push(pattern_pitches[i as usize % pattern_length]);
+                durs.push(tremolonotestaccato_dur);
+            }
+        } else { // staccato, inserts microrests between notes
+            for i in 0..(a_qdur * num_repetitions) {
+                pitches.push(pattern_pitches[i as usize % pattern_length]);
+                pitches.push(-1);
+                durs.push(tremolonotestaccato_dur);
+                durs.push(microrest_dur)
+            }
+        }
+        (pitches, durs)        
+    }
+}
+
+/// # Arguments in Vector
 /// interval_time, num_repetitions (in a interval_time), staccato_dur (1 to 12, 1=staccatissimo, 12=legato)
 pub fn replace_tremolo() -> impl Fn(Vec<i32>, i8, u32, i8, u32) -> (Vec<i8>, Vec<u32>) {
     |args: Vec<i32>, a_pitch: i8, a_dur: u32, _b_pitch: i8, _b_dur: u32| {
