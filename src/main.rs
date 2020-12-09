@@ -16,7 +16,7 @@ use std::path::Path;
 use std::time::Instant;
 
 /// WARNING: Change this notice for your own compositions!
-const COPYRIGHT_NOTICE: &str = "Copyright2020 by Cristiano Vecchi";
+const COPYRIGHT_NOTICE: &str = "Copyright (c) 2020 Cristiano Vecchi";
 /// the target PATH where the midi file will be created
 const RUSTMIDI_TEST_PATH: &str = "/home/cris/Desktop/";
 const _RUSTMIDI_TEST: &str = "/home/cris/Desktop/RUSTMIDI_TEST.MID";
