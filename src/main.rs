@@ -34,7 +34,7 @@ fn main() {
     //let solosequence = "TheAloneLocrio";
     //let solosequence = "TestingFunctions";
     //write_solosequence(get_solosequence(solosequence));
-    let multisequence = "MultiSequenceTEST";
+    let multisequence = "Pastoral";
     write_multisequence(get_multisequence(multisequence));
    
     let elapsed = start.elapsed();
