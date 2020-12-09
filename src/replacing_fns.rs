@@ -1,4 +1,33 @@
 /// # Arguments in Vector
+/// interval_time, num_repetitions (in a interval_time), staccato_dur (1 to 12, 1=staccatissimo, 12=legato)
+pub fn replace_tremolo() -> impl Fn(Vec<i32>, i8, u32, i8, u32) -> (Vec<i8>, Vec<u32>) {
+    |args: Vec<i32>, a_pitch: i8, a_dur: u32, _b_pitch: i8, _b_dur: u32| {
+        let interval_time = args[0] as u32;
+        let a_qdur = a_dur / interval_time;
+        let num_repetitions = args[1] as u32;
+        let tremolonote_dur  = interval_time / num_repetitions;
+        let tremolonotestaccato_dur = (tremolonote_dur / 12) * args[2] as u32;
+        let microrest_dur = tremolonote_dur - tremolonotestaccato_dur;
+        let mut pitches = vec![];
+        let mut durs = vec![];
+        if microrest_dur == 0 { // no staccato, no microrests
+            for _ in 0..(a_qdur * num_repetitions) {
+                pitches.push(a_pitch);
+                durs.push(tremolonotestaccato_dur);
+            }
+        } else { // staccato, inserts microrests between notes
+            for _ in 0..(a_qdur * num_repetitions) {
+                pitches.push(a_pitch);
+                pitches.push(-1);
+                durs.push(tremolonotestaccato_dur);
+                durs.push(microrest_dur)
+            }
+        }
+        (pitches, durs)        
+    }
+}
+
+/// # Arguments in Vector
 /// gracenote_interval, gracenote_duration
 pub fn replace_gracenote() -> impl Fn(Vec<i32>, i8, u32, i8, u32) -> (Vec<i8>, Vec<u32>) {
     |args: Vec<i32>, a_pitch: i8, a_dur: u32, _b_pitch: i8, _b_dur: u32| {

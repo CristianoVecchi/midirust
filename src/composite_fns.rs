@@ -2,6 +2,26 @@ use crate::checking_fns::*;
 use crate::replacing_fns::*;
 
 /// # Arguments in Vectors
+/// Check Args: interval, interval_time -------
+/// Replace Args: interval_time, num_repetitions (in a interval_time), 
+/// staccato_dur (1 to 12, 1=staccatissimo, 12=legato)
+pub fn tremolo_on_interval(
+    check_args: Vec<i32>,
+    replace_args: Vec<i32>,
+) -> (
+    (Box<dyn Fn(Vec<i32>, i8, u32, i8, u32) -> bool>, Vec<i32>),
+    (
+        Box<dyn Fn(Vec<i32>, i8, u32, i8, u32) -> (Vec<i8>, Vec<u32>)>,
+        Vec<i32>,
+    ),
+) {
+    (
+        (Box::new(check_interval_and_duration()), check_args),
+        (Box::new(replace_tremolo()), replace_args),
+    )
+}
+
+/// # Arguments in Vectors
 /// Check Args: interval -------
 /// Replace Args: interval_time, difference (interval)
 pub fn gliss_on_interval(

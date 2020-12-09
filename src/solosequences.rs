@@ -8,24 +8,35 @@ use crate::music_constants::*;
 pub fn get_solosequence(ss_title: &str) -> SoloSequence {
     let mut solosequences: Vec<SoloSequence> = vec![
         SoloSequence {
-            title: "FunctionsTEST",
-            instrument: 74, //74 = RECORDER
+            title: "TremoloTEST",
+            instrument: 0, //PIANO // 74 = RECORDER
             velocity: 100,
             abstract_notes: vec![
-                // REST, UNISON, UNISON, UNISON, UNISON,MAJ_2, MAJ_2, MAJ_2, MAJ_2, MAJ_2, 
-                // MIN_3, MIN_3,MIN_3,MIN_3,MIN_3,MAJ_3, P_4, P_4, P_4, P_4, AUM_4, P_5, P_5, P_5, P_5, MAJ_6, MAJ_6, MAJ_6, MAJ_6, MIN_7, MIN_7, MIN_7, MIN_7, MIN_7, MAJ_7
+                REST, UNISON, UNISON, UNISON, UNISON,MAJ_2, MAJ_2, MAJ_2, MAJ_2, MAJ_2, 
+                MIN_3, MIN_3,MIN_3,MIN_3,MIN_3,MAJ_3, P_4, P_4, P_4, P_4, 
+                AUM_4, P_5, P_5, P_5, P_5, MAJ_6, MAJ_6, MAJ_6, MAJ_6, 
+                MIN_7, MIN_7, MIN_7, MIN_7, MIN_7, MAJ_7
                 //the same scale in halftone numbers:
-                -1, 0, 0, 0, 0, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 
-                4, 5, 5, 5, 5, 6, 7, 7, 7, 7, 
-                9, 9, 9, 9, 10, 10, 10, 10, 10, 11,
+                // -1, 0, 0, 0, 0, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 
+                // 4, 5, 5, 5, 5, 6, 7, 7, 7, 7, 
+                // 9, 9, 9, 9, 10, 10, 10, 10, 10, 11,
             ],
             octaves: vec![2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4],
             figures: vec![1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 5, 6],
-            iter: 200,
+            iter: 500,
             interval_time: SIXTEENTH as u32, // 60 = 1/32
-            bpm: 108,
+            bpm: 90,
             check_n_replace: vec![
-                (trill_on_interval(vec![MAJ_2, SIXTEENTH], vec![SIXTEENTH])),
+                (tremolo_on_interval(vec![MAJ_2, SIXTEENTH],vec![SIXTEENTH,4, 6 ])),
+                (tremolo_on_interval(vec![-MAJ_2, SIXTEENTH],vec![SIXTEENTH,4, 6 ])),
+                (tremolo_on_interval(vec![MAJ_3, SIXTEENTH],vec![SIXTEENTH,3, 3 ])), // triplet tremolo
+                (tremolo_on_interval(vec![-MAJ_3, SIXTEENTH],vec![SIXTEENTH,3, 3 ])), 
+                (tremolo_on_interval(vec![MIN_3, SIXTEENTH],vec![SIXTEENTH,3, 1 ])), // very staccato triplet tremolo
+                (tremolo_on_interval(vec![-MIN_3, SIXTEENTH],vec![SIXTEENTH,3, 1 ])),  
+                (tremolo_on_interval(vec![P_5, SIXTEENTH],vec![SIXTEENTH,2, 9 ])),
+                (tremolo_on_interval(vec![-P_5, SIXTEENTH],vec![SIXTEENTH,2, 9 ])),
+                (tremolo_on_interval(vec![P_4, SIXTEENTH],vec![SIXTEENTH,2, 2 ])),
+                (tremolo_on_interval(vec![-P_4, SIXTEENTH],vec![SIXTEENTH,2, 2 ])),           
             ],
         },
         SoloSequence {
@@ -33,12 +44,14 @@ pub fn get_solosequence(ss_title: &str) -> SoloSequence {
             instrument: 74, //74 = RECORDER
             velocity: 100,
             abstract_notes: vec![
-                // REST, UNISON, UNISON, UNISON, UNISON,MAJ_2, MAJ_2, MAJ_2, MAJ_2, MAJ_2, 
-                // MIN_3, MIN_3,MIN_3,MIN_3,MIN_3,MAJ_3, P_4, P_4, P_4, P_4, AUM_4, P_5, P_5, P_5, P_5, MAJ_6, MAJ_6, MAJ_6, MAJ_6, MIN_7, MIN_7, MIN_7, MIN_7, MIN_7, MAJ_7
+                REST, UNISON, UNISON, UNISON, UNISON,MAJ_2, MAJ_2, MAJ_2, MAJ_2, MAJ_2, 
+                MIN_3, MIN_3,MIN_3,MIN_3,MIN_3,MAJ_3, P_4, P_4, P_4, P_4, 
+                AUM_4, P_5, P_5, P_5, P_5, MAJ_6, MAJ_6, MAJ_6, MAJ_6, 
+                MIN_7, MIN_7, MIN_7, MIN_7, MIN_7, MAJ_7
                 //the same scale in halftone numbers:
-                -1, 0, 0, 0, 0, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 
-                4, 5, 5, 5, 5, 6, 7, 7, 7, 7, 
-                9, 9, 9, 9, 10, 10, 10, 10, 10, 11,
+                // -1, 0, 0, 0, 0, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 
+                // 4, 5, 5, 5, 5, 6, 7, 7, 7, 7, 
+                // 9, 9, 9, 9, 10, 10, 10, 10, 10, 11,
             ],
             octaves: vec![2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4],
             figures: vec![1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 5, 6],

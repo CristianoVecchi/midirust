@@ -32,10 +32,10 @@ const _BACH_INVENTIO1: &str = "/home/cris/Desktop/bach_inventio1.mid";
 fn main() {
     let start = Instant::now();
     //let solosequence = "TheAloneLocrio";
-    //let solosequence = "TestingFunctions";
-    //write_solosequence(get_solosequence(solosequence));
-    let multisequence = "Pastoral";
-    write_multisequence(get_multisequence(multisequence));
+    let solosequence = "TremoloTEST";
+    write_solosequence(get_solosequence(solosequence));
+    //let multisequence = "Pastoral";
+    //write_multisequence(get_multisequence(multisequence));
    
     let elapsed = start.elapsed();
     println!("Midifile created in {} milliseconds", elapsed.as_millis());
