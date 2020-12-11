@@ -1,4 +1,7 @@
 #![allow(dead_code)]
+pub const IONIAN: [i32;7] = [UNISON, MAJ_2, MAJ_3, P_4, P_5, MAJ_6, MAJ_7];
+pub const DORIAN: [i32;7] = [UNISON, MAJ_2, MIN_3, P_4, P_5, MAJ_6, MIN_7];
+
 pub const QUARTER: i32 = 480;
 pub const EIGHTH: i32 = 240;
 pub const SIXTEENTH: i32 = 120;

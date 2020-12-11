@@ -1,6 +1,7 @@
 /// # Arguments in Vector
 /// interval
-pub fn check_interval() -> impl Fn(Vec<i32>, i8, i32, i8, i32) -> bool {
+
+pub fn check_interval() -> impl Fn(Vec<i32>, i8, i32, i8, i32)  -> bool {
     |args: Vec<i32>, a_pitch: i8, _a_dur: i32, b_pitch: i8, _b_dur: i32| {
         if a_pitch == -1 || b_pitch == -1 {
             return false;

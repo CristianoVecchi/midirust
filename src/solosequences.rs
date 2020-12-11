@@ -6,6 +6,17 @@ use crate::replacing_fns::*;
 use crate::music_constants::*;
 
 pub fn get_solosequence(ss_title: &str) -> SoloSequence {
+    //[&first[..], &second[..]].concat()
+    let _vector_concat_example = [&IONIAN[..],&DORIAN[..],&[ -1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 2, 3, 3, 3, 3, 3, 3, 4, 5,
+    5, 5, 5, 6, 6, 6, 6, 6, 6, 7, 8, 8, 8, 8, 9, 10, 10, 10, 10, 10, 10, 11][..]].concat().to_vec();
+    let _vector = concat_c_n_r(vec![vec![
+                    
+        (tremolopattern_on_interval_in_range(vec![MIN_2, 1,90,SIXTEENTH],
+            vec![SIXTEENTH,6, 12, UNISON, -MIN_2, -MAJ_2, -MIN_3, -MAJ_2,-MIN_2])),         
+        (tremolopattern_on_interval_in_range(vec![-MIN_2, 1,90,SIXTEENTH],
+            vec![SIXTEENTH,6, 12, UNISON, MIN_2, MAJ_2, MIN_3, MAJ_2,MIN_2])),   
+        
+    ], tremolo_style()]);
     let mut solosequences: Vec<SoloSequence> = vec![
         SoloSequence {
             title: "TremoloTEST",
@@ -26,42 +37,37 @@ pub fn get_solosequence(ss_title: &str) -> SoloSequence {
             iter: 700,
             interval_time: SIXTEENTH, // 60 = 1/32
             bpm: 78,
-            check_n_replace: vec![
-                (tremolo_on_interval(vec![MAJ_2, SIXTEENTH],vec![SIXTEENTH,4, 6 ])),
-                (tremolo_on_interval(vec![-MAJ_2, SIXTEENTH],vec![SIXTEENTH,4, 6 ])),
-                (tremolo_on_interval(vec![MAJ_3, SIXTEENTH],vec![SIXTEENTH,3, 3 ])), // triplet tremolo
-                (tremolo_on_interval(vec![-MAJ_3, SIXTEENTH],vec![SIXTEENTH,3, 3 ])), 
-                (tremolo_on_interval(vec![MIN_3, SIXTEENTH],vec![SIXTEENTH,3, 1 ])), // very staccato triplet tremolo
-                (tremolo_on_interval(vec![-MIN_3, SIXTEENTH],vec![SIXTEENTH,3, 1 ])),  
-                (tremolo_on_interval(vec![P_5, SIXTEENTH],vec![SIXTEENTH,2, 9 ])),
-                (tremolo_on_interval(vec![-P_5, SIXTEENTH],vec![SIXTEENTH,2, 9 ])),
-                (tremolo_on_interval(vec![P_4, SIXTEENTH],vec![SIXTEENTH,2, 2 ])),
-                (tremolo_on_interval(vec![-P_4, SIXTEENTH],vec![SIXTEENTH,2, 2 ])),
-                (tremolopattern_on_interval_in_range(vec![MIN_2, 1,90,SIXTEENTH],
-                    vec![SIXTEENTH,6, 12, UNISON, -MIN_2, -MAJ_2, -MIN_3, -MAJ_2,-MIN_2])),         
-                (tremolopattern_on_interval_in_range(vec![-MIN_2, 1,90,SIXTEENTH],
-                    vec![SIXTEENTH,6, 12, UNISON, MIN_2, MAJ_2, MIN_3, MAJ_2,MIN_2])),   
-                (tremolopattern_on_interval_in_range(vec![MAJ_6, 1,90,SIXTEENTH],
-                    vec![SIXTEENTH,3, 2, P_5, MAJ_3, UNISON ])),         
-                (tremolopattern_on_interval_in_range(vec![-MAJ_6, 1,90,SIXTEENTH],
-                    vec![SIXTEENTH,4, 6, UNISON, -MIN_3, -P_4,-P_5])), 
-                (tremolopattern_on_interval_in_range(vec![MIN_6, 1,90,SIXTEENTH],
-                    vec![SIXTEENTH,3, 2, P_5, MIN_3, UNISON ])),         
-                (tremolopattern_on_interval_in_range(vec![-MIN_6, 1,90,SIXTEENTH],
-                    vec![SIXTEENTH,4, 6, UNISON, -MAJ_3, -AUM_4,-P_5])), 
-                (tremolopattern_on_interval_in_range(vec![MIN_7, 1,90,SIXTEENTH],
-                    vec![SIXTEENTH,4, 4, UNISON, MIN_3, P_4, AUM_4 ])),         
-                (tremolopattern_on_interval_in_range(vec![-MIN_7, 1,90,SIXTEENTH],
-                    vec![SIXTEENTH,3, 9, UNISON, -MIN_3, -P_5])), 
-                (tremolopattern_on_interval_in_range(vec![MAJ_7, 1,90,SIXTEENTH],
-                    vec![SIXTEENTH,4, 12, UNISON, MAJ_3, P_4, P_5 ])),         
-                (tremolopattern_on_interval_in_range(vec![-MAJ_7, 1,90,SIXTEENTH],
-                    vec![SIXTEENTH,3, 9, UNISON, -MAJ_3, -MIN_6])), 
-                (tremolopattern_on_interval_in_range(vec![MAJ_9, 1,90,SIXTEENTH],
-                    vec![SIXTEENTH,6, 6, UNISON, MIN_3, P_4, AUM_4,P_5 , MIN_7])),         
-                (tremolopattern_on_interval_in_range(vec![-MAJ_9, 1,90,SIXTEENTH],
-                    vec![SIXTEENTH,6, 12, UNISON, -MAJ_3,-AUM_4, -MIN_6,-MAJ_7])), 
-            ],
+            check_n_replace:
+                concat_c_n_r(vec![ 
+                    tremolo_style(),
+                vec![                  
+                    (tremolopattern_on_interval_in_range(vec![MIN_2, 1,90,SIXTEENTH],
+                        vec![SIXTEENTH,6, 12, UNISON, -MIN_2, -MAJ_2, -MIN_3, -MAJ_2,-MIN_2])),         
+                    (tremolopattern_on_interval_in_range(vec![-MIN_2, 1,90,SIXTEENTH],
+                        vec![SIXTEENTH,6, 12, UNISON, MIN_2, MAJ_2, MIN_3, MAJ_2,MIN_2])),   
+                    (tremolopattern_on_interval_in_range(vec![MAJ_6, 1,90,SIXTEENTH],
+                        vec![SIXTEENTH,3, 2, P_5, MAJ_3, UNISON ])),         
+                    (tremolopattern_on_interval_in_range(vec![-MAJ_6, 1,90,SIXTEENTH],
+                        vec![SIXTEENTH,4, 6, UNISON, -MIN_3, -P_4,-P_5])), 
+                    (tremolopattern_on_interval_in_range(vec![MIN_6, 1,90,SIXTEENTH],
+                        vec![SIXTEENTH,3, 2, P_5, MIN_3, UNISON ])),         
+                    (tremolopattern_on_interval_in_range(vec![-MIN_6, 1,90,SIXTEENTH],
+                        vec![SIXTEENTH,4, 6, UNISON, -MAJ_3, -AUM_4,-P_5])), 
+                    (tremolopattern_on_interval_in_range(vec![MIN_7, 1,90,SIXTEENTH],
+                        vec![SIXTEENTH,4, 4, UNISON, MIN_3, P_4, AUM_4 ])),         
+                    (tremolopattern_on_interval_in_range(vec![-MIN_7, 1,90,SIXTEENTH],
+                        vec![SIXTEENTH,3, 9, UNISON, -MIN_3, -P_5])), 
+                    (tremolopattern_on_interval_in_range(vec![MAJ_7, 1,90,SIXTEENTH],
+                        vec![SIXTEENTH,4, 12, UNISON, MAJ_3, P_4, P_5 ])),         
+                    (tremolopattern_on_interval_in_range(vec![-MAJ_7, 1,90,SIXTEENTH],
+                        vec![SIXTEENTH,3, 9, UNISON, -MAJ_3, -MIN_6])), 
+                    (tremolopattern_on_interval_in_range(vec![MAJ_9, 1,90,SIXTEENTH],
+                        vec![SIXTEENTH,6, 6, UNISON, MIN_3, P_4, AUM_4,P_5 , MIN_7])),         
+                    (tremolopattern_on_interval_in_range(vec![-MAJ_9, 1,90,SIXTEENTH],
+                        vec![SIXTEENTH,6, 12, UNISON, -MAJ_3,-AUM_4, -MIN_6,-MAJ_7]))
+                ],
+            ]), 
+               
         },
         SoloSequence {
             title: "PastoralSolo",
@@ -112,10 +118,12 @@ pub fn get_solosequence(ss_title: &str) -> SoloSequence {
             title: "TheAloneLocrio",
             instrument: 75, //74 = FLUTE
             velocity: 100,
-            abstract_notes: vec![
-                -1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 2, 3, 3, 3, 3, 3, 3, 4, 5,
-                5, 5, 5, 6, 6, 6, 6, 6, 6, 7, 8, 8, 8, 8, 9, 10, 10, 10, 10, 10, 10, 11,
-            ],
+            abstract_notes: 
+                [
+                    &IONIAN[..],
+                    &[ -1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 2, 3, 3, 3, 3, 3, 3, 4, 5,
+                    5, 5, 5, 6, 6, 6, 6, 6, 6, 7, 8, 8, 8, 8, 9, 10, 10, 10, 10, 10, 10, 11][..]
+                ].concat(),
             octaves: vec![
                 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5,
             ],
