@@ -6,10 +6,10 @@ use rimd::{MetaEvent, MidiMessage, SMFBuilder};
 
 pub fn replace_by_closures(
     pitches: &mut Vec<i8>,
-    durations: &mut Vec<u32>,
-    check_fn: Box<dyn Fn(Vec<i32>, i8, u32, i8, u32) -> bool>,
+    durations: &mut Vec<i32>,
+    check_fn: Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> bool>,
     check_args: Vec<i32>,
-    replace_fn: Box<dyn Fn(Vec<i32>, i8, u32, i8, u32) -> (Vec<i8>, Vec<u32>)>,
+    replace_fn: Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> (Vec<i8>, Vec<i32>)>,
     replace_args: Vec<i32>,
 ) {
     
@@ -17,6 +17,7 @@ pub fn replace_by_closures(
     let mut limit = pitches.len() - 1; // because it ends to the second last note
     while index < limit {
         let ch_args = check_args.clone();
+        let rep_args = replace_args.clone();
         //println!("index: {}", index);
         let a_pitch = pitches[index];
         let b_pitch = pitches[index + 1];
@@ -24,7 +25,6 @@ pub fn replace_by_closures(
         let b_dur = durations[index + 1];
         if check_fn(ch_args, a_pitch, a_dur, b_pitch, b_dur) {
             //println!("a {} {}, b {} {}", a_pitch, a_dur, b_pitch, b_dur);
-            let rep_args = replace_args.clone();
             let (new_pitches, new_durs) = replace_fn(rep_args, a_pitch, a_dur, b_pitch, b_dur);
             let new_len = new_pitches.len();
             //println!("new_len {}", new_len);
@@ -41,7 +41,7 @@ pub fn replace_by_closures(
         }
     }
 }
-pub fn assign_concrete_pitches(pairs: Vec<[i32; 2]>, lowest_limit: u32) -> Vec<i8> {
+pub fn assign_concrete_pitches(pairs: Vec<[i32; 2]>, lowest_limit: i32) -> Vec<i8> {
     //(0..pairs.len()).map(|i| pairs[i][0]  + pairs[i][1]*12 + lowest_limit).collect::<Vec<u32>>()
     pairs
         .iter()
@@ -49,7 +49,7 @@ pub fn assign_concrete_pitches(pairs: Vec<[i32; 2]>, lowest_limit: u32) -> Vec<i
             if pair[0] == -1 {
                 -1 as i8
             } else {
-                (pair[0] + pair[1] * 12 + (lowest_limit as i32)) as i8
+                (pair[0] + pair[1] * 12 + lowest_limit) as i8
             }
         })
         //.map(|i| (i as i8))
@@ -57,7 +57,7 @@ pub fn assign_concrete_pitches(pairs: Vec<[i32; 2]>, lowest_limit: u32) -> Vec<i
 }
 pub fn assign_concrete_pitches_transposing(
     pairs: Vec<[i32; 2]>,
-    lowest_limit: u32,
+    lowest_limit: i32,
     transpose: i8,
 ) -> Vec<i8> {
     //(0..pairs.len()).map(|i| pairs[i][0]  + pairs[i][1]*12 + down_limit).collect::<Vec<u32>>()
@@ -67,17 +67,17 @@ pub fn assign_concrete_pitches_transposing(
             if pair[0] == -1 {
                 -1 as i8
             } else {
-                (pair[0] + pair[1] * 12 + (lowest_limit as i32)) as i8 + transpose
+                (pair[0] + pair[1] * 12 + lowest_limit) as i8 + transpose
             }
         })
         //.map(|i| (i as i8))
         .collect::<Vec<i8>>()
 }
 pub fn matrix3d_rnd_generator(
-    iter: u32,
+    iter: i32,
     xs: &mut Vec<i32>,
     ys: &mut Vec<i32>,
-    zs: &mut Vec<u32>,
+    zs: &mut Vec<i32>,
 ) -> Vec<[i32; 3]> {
     let mut result = Vec::new();
     let mut x_count = 0;
@@ -99,14 +99,14 @@ pub fn matrix3d_rnd_generator(
             zs.shuffle(&mut thread_rng());
             z_count = 0;
         };
-        result.push([xs[x_count], ys[y_count], zs[z_count] as i32]);
+        result.push([xs[x_count], ys[y_count], zs[z_count]]);
         x_count += 1;
         y_count += 1;
         z_count += 1;
     }
     result
 }
-pub fn matrix2d_rnd_generator(iter: u32, xs: &mut Vec<i32>, ys: &mut Vec<i32>) -> Vec<[i32; 2]> {
+pub fn matrix2d_rnd_generator(iter: i32, xs: &mut Vec<i32>, ys: &mut Vec<i32>) -> Vec<[i32; 2]> {
     let mut result = Vec::new();
     //let used_xs = (0..xs.len()).map(|i| false).collect::<Vec<bool>>();
     
@@ -133,11 +133,11 @@ pub fn matrix2d_rnd_generator(iter: u32, xs: &mut Vec<i32>, ys: &mut Vec<i32>) -
 pub fn add_notes_and_durations(
     builder: &mut SMFBuilder,
     track: usize,
-    initial_time: u32,
+    initial_time: i32,
     pitches: Vec<i8>,
     velocity: u8,
     channel: u8,
-    durations: Vec<u32>,
+    durations: Vec<i32>,
 ) {
     let mut initial_time = initial_time;
     for (i, p) in pitches.iter().enumerate() {
@@ -164,11 +164,11 @@ pub fn add_notes_and_durations(
 pub fn add_notes(
     builder: &mut SMFBuilder,
     track: usize,
-    initial_time: u32,
+    initial_time: i32,
     pitches: Vec<i8>,
     velocity: u8,
     channel: u8,
-    interval_time: u32,
+    interval_time: i32,
 ) {
     let mut initial_time = initial_time;
     for p in pitches {
@@ -200,7 +200,7 @@ pub fn add_notes(
 // key signature: i8 -> number of sharps(+)/flats(-), i8 -> 0 = Major | 1 = minor | _ = Invalid
 pub fn set_header(
     builder: &mut SMFBuilder,
-    initial_time: u32,
+    initial_time: i32,
     copyright: Option<String>,
     sequence_title: Option<String>,
     instrument_names: Option<Vec<String>>,

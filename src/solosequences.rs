@@ -24,7 +24,7 @@ pub fn get_solosequence(ss_title: &str) -> SoloSequence {
             octaves: vec![2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4],
             figures: vec![1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 5, 6],
             iter: 700,
-            interval_time: SIXTEENTH as u32, // 60 = 1/32
+            interval_time: SIXTEENTH, // 60 = 1/32
             bpm: 78,
             check_n_replace: vec![
                 (tremolo_on_interval(vec![MAJ_2, SIXTEENTH],vec![SIXTEENTH,4, 6 ])),
@@ -80,7 +80,7 @@ pub fn get_solosequence(ss_title: &str) -> SoloSequence {
             octaves: vec![2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4],
             figures: vec![1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 5, 6],
             iter: 200,
-            interval_time: SIXTEENTH as u32, // 60 = 1/32
+            interval_time: SIXTEENTH, // 60 = 1/32
             bpm: 108,
             check_n_replace: vec![
                 (trill_on_interval(vec![MAJ_2, SIXTEENTH], vec![SIXTEENTH])),
@@ -121,7 +121,7 @@ pub fn get_solosequence(ss_title: &str) -> SoloSequence {
             ],
             figures: vec![1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 4, 5, 6, 7],
             iter: 500,
-            interval_time: EIGHTH as u32, // 60 = 1/32
+            interval_time: EIGHTH, // 60 = 1/32
             bpm: 90,
             check_n_replace: vec![
                 (
@@ -194,15 +194,15 @@ pub struct SoloSequence<'a> {
     pub velocity: u8,
     pub abstract_notes: Vec<i32>,
     pub octaves: Vec<i32>,
-    pub figures: Vec<u32>,
-    pub iter: u32,
-    pub interval_time: u32,
+    pub figures: Vec<i32>,
+    pub iter: i32,
+    pub interval_time: i32,
     pub bpm: u32,
     pub check_n_replace: Vec<(
         // a vector filled by tuples with (a (check closure + args) and a (replace closure + args) )
-        (Box<dyn Fn(Vec<i32>, i8, u32, i8, u32) -> bool>, Vec<i32>),
+        (Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> bool>, Vec<i32>),
         (
-            Box<dyn Fn(Vec<i32>, i8, u32, i8, u32) -> (Vec<i8>, Vec<u32>)>,
+            Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> (Vec<i8>, Vec<i32>)>,
             Vec<i32>,
         ),
     )>,

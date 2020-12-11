@@ -1,7 +1,7 @@
 /// # Arguments in Vector
 /// interval
-pub fn check_interval() -> impl Fn(Vec<i32>, i8, u32, i8, u32) -> bool {
-    |args: Vec<i32>, a_pitch: i8, _a_dur: u32, b_pitch: i8, _b_dur: u32| {
+pub fn check_interval() -> impl Fn(Vec<i32>, i8, i32, i8, i32) -> bool {
+    |args: Vec<i32>, a_pitch: i8, _a_dur: i32, b_pitch: i8, _b_dur: i32| {
         if a_pitch == -1 || b_pitch == -1 {
             return false;
         }
@@ -11,8 +11,8 @@ pub fn check_interval() -> impl Fn(Vec<i32>, i8, u32, i8, u32) -> bool {
 
 /// # Arguments in Vector
 /// interval, lower_limit, upper_limit
-pub fn check_interval_in_range() -> impl Fn(Vec<i32>, i8, u32, i8, u32) -> bool {
-    |args: Vec<i32>, a_pitch: i8, _a_dur: u32, b_pitch: i8, _b_dur: u32| {
+pub fn check_interval_in_range() -> impl Fn(Vec<i32>, i8, i32, i8, i32) -> bool {
+    |args: Vec<i32>, a_pitch: i8, _a_dur: i32, b_pitch: i8, _b_dur: i32| {
         if a_pitch == -1 || b_pitch == -1 {
             return false;
         }
@@ -30,9 +30,9 @@ pub fn check_interval_in_range() -> impl Fn(Vec<i32>, i8, u32, i8, u32) -> bool 
 }
 /// # Arguments in Vector
 /// interval, interval_time
-pub fn check_interval_and_duration() -> impl Fn(Vec<i32>, i8, u32, i8, u32) -> bool {
-    |args: Vec<i32>, a_pitch: i8, a_dur: u32, b_pitch: i8, _b_dur: u32| {
-        let interval_time = args[1] as u32;
+pub fn check_interval_and_duration() -> impl Fn(Vec<i32>, i8, i32, i8, i32) -> bool {
+    |args: Vec<i32>, a_pitch: i8, a_dur: i32, b_pitch: i8, _b_dur: i32| {
+        let interval_time = args[1] ;
         if a_dur < interval_time || a_pitch == -1 || b_pitch == -1 {
             return false;
         }
@@ -42,9 +42,9 @@ pub fn check_interval_and_duration() -> impl Fn(Vec<i32>, i8, u32, i8, u32) -> b
 
 /// # Arguments in Vector
 /// interval, lower_limit, upper_limit, interval_time
-pub fn check_interval_in_range_and_duration() -> impl Fn(Vec<i32>, i8, u32, i8, u32) -> bool {
-    |args: Vec<i32>, a_pitch: i8, a_dur: u32, b_pitch: i8, _b_dur: u32| {
-        let interval_time = args[3] as u32;
+pub fn check_interval_in_range_and_duration() -> impl Fn(Vec<i32>, i8, i32, i8, i32) -> bool {
+    |args: Vec<i32>, a_pitch: i8, a_dur: i32, b_pitch: i8, _b_dur: i32| {
+        let interval_time = args[3];
         if a_dur < interval_time || a_pitch == -1 || b_pitch == -1 {
             return false;
         }

@@ -10,9 +10,9 @@ pub fn tremolopattern_on_interval_in_range(
     check_args: Vec<i32>,
     replace_args: Vec<i32>,
 ) -> (
-    (Box<dyn Fn(Vec<i32>, i8, u32, i8, u32) -> bool>, Vec<i32>),
+    (Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> bool>, Vec<i32>),
     (
-        Box<dyn Fn(Vec<i32>, i8, u32, i8, u32) -> (Vec<i8>, Vec<u32>)>,
+        Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> (Vec<i8>, Vec<i32>)>,
         Vec<i32>,
     ),
 ) {
@@ -30,9 +30,9 @@ pub fn tremolo_on_interval(
     check_args: Vec<i32>,
     replace_args: Vec<i32>,
 ) -> (
-    (Box<dyn Fn(Vec<i32>, i8, u32, i8, u32) -> bool>, Vec<i32>),
+    (Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> bool>, Vec<i32>),
     (
-        Box<dyn Fn(Vec<i32>, i8, u32, i8, u32) -> (Vec<i8>, Vec<u32>)>,
+        Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> (Vec<i8>, Vec<i32>)>,
         Vec<i32>,
     ),
 ) {
@@ -49,9 +49,9 @@ pub fn gliss_on_interval(
     check_args: Vec<i32>,
     replace_args: Vec<i32>,
 ) -> (
-    (Box<dyn Fn(Vec<i32>, i8, u32, i8, u32) -> bool>, Vec<i32>),
+    (Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> bool>, Vec<i32>),
     (
-        Box<dyn Fn(Vec<i32>, i8, u32, i8, u32) -> (Vec<i8>, Vec<u32>)>,
+        Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> (Vec<i8>, Vec<i32>)>,
         Vec<i32>,
     ),
 ) {
@@ -68,9 +68,9 @@ pub fn group_on_interval_in_range(
     check_args: Vec<i32>,
     replace_args: Vec<i32>,
 ) -> (
-    (Box<dyn Fn(Vec<i32>, i8, u32, i8, u32) -> bool>, Vec<i32>),
+    (Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> bool>, Vec<i32>),
     (
-        Box<dyn Fn(Vec<i32>, i8, u32, i8, u32) -> (Vec<i8>, Vec<u32>)>,
+        Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> (Vec<i8>, Vec<i32>)>,
         Vec<i32>,
     ),
 ) {
@@ -87,9 +87,9 @@ pub fn trill_on_interval(
     check_args: Vec<i32>,
     replace_args: Vec<i32>,
 ) -> (
-    (Box<dyn Fn(Vec<i32>, i8, u32, i8, u32) -> bool>, Vec<i32>),
+    (Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> bool>, Vec<i32>),
     (
-        Box<dyn Fn(Vec<i32>, i8, u32, i8, u32) -> (Vec<i8>, Vec<u32>)>,
+        Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> (Vec<i8>, Vec<i32>)>,
         Vec<i32>,
     ),
 ) {
@@ -106,9 +106,9 @@ pub fn gracenote_on_interval(
     check_args: Vec<i32>,
     replace_args: Vec<i32>,
 ) -> (
-    (Box<dyn Fn(Vec<i32>, i8, u32, i8, u32) -> bool>, Vec<i32>),
+    (Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> bool>, Vec<i32>),
     (
-        Box<dyn Fn(Vec<i32>, i8, u32, i8, u32) -> (Vec<i8>, Vec<u32>)>,
+        Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> (Vec<i8>, Vec<i32>)>,
         Vec<i32>,
     ),
 ) {
@@ -124,9 +124,9 @@ pub fn approachgliss_on_interval(
     check_args: Vec<i32>,
     replace_args: Vec<i32>,
 ) -> (
-    (Box<dyn Fn(Vec<i32>, i8, u32, i8, u32) -> bool>, Vec<i32>),
+    (Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> bool>, Vec<i32>),
     (
-        Box<dyn Fn(Vec<i32>, i8, u32, i8, u32) -> (Vec<i8>, Vec<u32>)>,
+        Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> (Vec<i8>, Vec<i32>)>,
         Vec<i32>,
     ),
 ) {
@@ -139,9 +139,9 @@ pub fn approachgliss_on_interval(
 //     check_args: Vec<i32>,
 //     replace_args: Vec<i32>,
 // ) -> (
-//     (Box<dyn Fn(Vec<i32>, i8, u32, i8, u32) -> bool>, Vec<i32>),
+//     (Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> bool>, Vec<i32>),
 //     (
-//         Box<dyn Fn(Vec<i32>, i8, u32, i8, u32) -> (Vec<i8>, Vec<u32>)>,
+//         Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> (Vec<i8>, Vec<i32>)>,
 //         Vec<i32>,
 //     ),
 // ) {

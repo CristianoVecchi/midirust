@@ -2,13 +2,13 @@
 /// interval_time, num_repetitions (in a interval_time),  
 /// staccato_dur (1 to 12, 1=staccatissimo, 12=legato), 
 /// interval[0], interval[1], interval[2] etc...
-pub fn replace_tremolopattern() -> impl Fn(Vec<i32>, i8, u32, i8, u32) -> (Vec<i8>, Vec<u32>) {
-    |args: Vec<i32>, a_pitch: i8, a_dur: u32, _b_pitch: i8, _b_dur: u32| {
-        let interval_time = args[0] as u32;
+pub fn replace_tremolopattern() -> impl Fn(Vec<i32>, i8, i32, i8, i32) -> (Vec<i8>, Vec<i32>) {
+    |args: Vec<i32>, a_pitch: i8, a_dur: i32, _b_pitch: i8, _b_dur: i32| {
+        let interval_time = args[0];
         let a_qdur = a_dur / interval_time;
-        let num_repetitions = args[1] as u32;
+        let num_repetitions = args[1];
         let tremolonote_dur  = interval_time / num_repetitions;
-        let tremolonotestaccato_dur = (tremolonote_dur / 12) * args[2] as u32;
+        let tremolonotestaccato_dur = (tremolonote_dur / 12) * args[2];
         let microrest_dur = tremolonote_dur - tremolonotestaccato_dur;
         let pattern_length = args.len()- 3;
         //let used_xs = (0..xs.len()).map(|i| false).collect::<Vec<bool>>();
@@ -34,13 +34,13 @@ pub fn replace_tremolopattern() -> impl Fn(Vec<i32>, i8, u32, i8, u32) -> (Vec<i
 
 /// # Arguments in Vector
 /// interval_time, num_repetitions (in a interval_time), staccato_dur (1 to 12, 1=staccatissimo, 12=legato)
-pub fn replace_tremolo() -> impl Fn(Vec<i32>, i8, u32, i8, u32) -> (Vec<i8>, Vec<u32>) {
-    |args: Vec<i32>, a_pitch: i8, a_dur: u32, _b_pitch: i8, _b_dur: u32| {
-        let interval_time = args[0] as u32;
+pub fn replace_tremolo() -> impl Fn(Vec<i32>, i8, i32, i8, i32) -> (Vec<i8>, Vec<i32>) {
+    |args: Vec<i32>, a_pitch: i8, a_dur: i32, _b_pitch: i8, _b_dur: i32| {
+        let interval_time = args[0];
         let a_qdur = a_dur / interval_time;
-        let num_repetitions = args[1] as u32;
+        let num_repetitions = args[1];
         let tremolonote_dur  = interval_time / num_repetitions;
-        let tremolonotestaccato_dur = (tremolonote_dur / 12) * args[2] as u32;
+        let tremolonotestaccato_dur = (tremolonote_dur / 12) * args[2];
         let microrest_dur = tremolonote_dur - tremolonotestaccato_dur;
         let mut pitches = vec![];
         let mut durs = vec![];
@@ -63,11 +63,11 @@ pub fn replace_tremolo() -> impl Fn(Vec<i32>, i8, u32, i8, u32) -> (Vec<i8>, Vec
 
 /// # Arguments in Vector
 /// gracenote_interval, gracenote_duration
-pub fn replace_gracenote() -> impl Fn(Vec<i32>, i8, u32, i8, u32) -> (Vec<i8>, Vec<u32>) {
-    |args: Vec<i32>, a_pitch: i8, a_dur: u32, _b_pitch: i8, _b_dur: u32| {
+pub fn replace_gracenote() -> impl Fn(Vec<i32>, i8, i32, i8, i32) -> (Vec<i8>, Vec<i32>) {
+    |args: Vec<i32>, a_pitch: i8, a_dur: i32, _b_pitch: i8, _b_dur: i32| {
         
             let gracenote_interval = args[0] as i8;
-            let gracenote_dur = args[1] as u32;
+            let gracenote_dur = args[1];
             (
                 vec![a_pitch, a_pitch + gracenote_interval],
                 vec![a_dur - gracenote_dur, gracenote_dur],
@@ -77,9 +77,9 @@ pub fn replace_gracenote() -> impl Fn(Vec<i32>, i8, u32, i8, u32) -> (Vec<i8>, V
 }
 /// # Arguments in Vector
 /// interval_time, initial_direction
-pub fn replace_group() -> impl Fn(Vec<i32>, i8, u32, i8, u32) -> (Vec<i8>, Vec<u32>) {
-    |args: Vec<i32>, a_pitch: i8, a_dur: u32, _b_pitch: i8, _b_dur: u32| {
-        let interval_time = args[0] as u32;
+pub fn replace_group() -> impl Fn(Vec<i32>, i8, i32, i8, i32) -> (Vec<i8>, Vec<i32>) {
+    |args: Vec<i32>, a_pitch: i8, a_dur: i32, _b_pitch: i8, _b_dur: i32| {
+        let interval_time = args[0];
         let a_qdur = a_dur / interval_time;
         if a_qdur < 2 {
             (vec![a_pitch], vec![a_dur])
@@ -106,12 +106,12 @@ pub fn replace_group() -> impl Fn(Vec<i32>, i8, u32, i8, u32) -> (Vec<i8>, Vec<u
 }
 /// # Arguments in Vector
 /// glissnote_duration
-pub fn replace_approachgliss() -> impl Fn(Vec<i32>, i8, u32, i8, u32) -> (Vec<i8>, Vec<u32>) {
-    |args: Vec<i32>, a_pitch: i8, a_dur: u32, b_pitch: i8, _b_dur: u32| {
+pub fn replace_approachgliss() -> impl Fn(Vec<i32>, i8, i32, i8, i32) -> (Vec<i8>, Vec<i32>) {
+    |args: Vec<i32>, a_pitch: i8, a_dur: i32, b_pitch: i8, _b_dur: i32| {
         
-            let gliss_note_dur = args[0] as u32;
+            let gliss_note_dur = args[0];
             let n_pos_notes = a_dur / gliss_note_dur;
-            let n_gliss_notes = (a_pitch - b_pitch).abs() as u32;
+            let n_gliss_notes = (a_pitch - b_pitch).abs() as i32;
             let direction = if a_pitch < b_pitch { 1 } else { -1 };
             let mut pitches = vec![];
             let mut durs = vec![];
@@ -142,9 +142,9 @@ pub fn replace_approachgliss() -> impl Fn(Vec<i32>, i8, u32, i8, u32) -> (Vec<i8
 
 /// # Arguments in Vector
 /// interval_time
-pub fn replace_trill() -> impl Fn(Vec<i32>, i8, u32, i8, u32) -> (Vec<i8>, Vec<u32>) {
-    |args: Vec<i32>, a_pitch: i8, a_dur: u32, b_pitch: i8, _b_dur: u32| {
-        let interval_time = args[0] as u32;
+pub fn replace_trill() -> impl Fn(Vec<i32>, i8, i32, i8, i32) -> (Vec<i8>, Vec<i32>) {
+    |args: Vec<i32>, a_pitch: i8, a_dur: i32, b_pitch: i8, _b_dur: i32| {
+        let interval_time = args[0];
         let a_qdur = a_dur / interval_time;
         if a_qdur == 1 {
             (vec![a_pitch], vec![a_dur])
@@ -173,10 +173,10 @@ pub fn replace_trill() -> impl Fn(Vec<i32>, i8, u32, i8, u32) -> (Vec<i8>, Vec<u
 
 /// # Arguments in Vector
 /// interval_time, difference
-pub fn replace_gliss() -> impl Fn(Vec<i32>, i8, u32, i8, u32) -> (Vec<i8>, Vec<u32>) {
-    |args: Vec<i32>, a_pitch: i8, a_dur: u32, _b_pitch: i8, _b_dur: u32| {
-        let interval_time = args[0] as u32;
-        let difference = args[1];
+pub fn replace_gliss() -> impl Fn(Vec<i32>, i8, i32, i8, i32) -> (Vec<i8>, Vec<i32>) {
+    |args: Vec<i32>, a_pitch: i8, a_dur: i32, _b_pitch: i8, _b_dur: i32| {
+        let interval_time = args[0];
+        let difference = args[1] as i8;
         let a_qdur = a_dur / interval_time;
         if a_qdur == 2 {
             let qdur0 = a_qdur - 1;
@@ -185,13 +185,13 @@ pub fn replace_gliss() -> impl Fn(Vec<i32>, i8, u32, i8, u32) -> (Vec<i8>, Vec<u
             (
                 vec![
                     a_pitch,
-                    a_pitch + difference as i8,
-                    a_pitch + difference as i8 * 2,
+                    a_pitch + difference,
+                    a_pitch + difference * 2,
                 ],
                 vec![
                     qdur0 * interval_time,
-                    (qdur1 * interval_time as f32) as u32,
-                    (qdur2 * interval_time as f32) as u32,
+                    (qdur1 * interval_time as f32) as i32,
+                    (qdur2 * interval_time as f32) as i32,
                 ],
             )
         } else if a_qdur > 2 {
@@ -201,8 +201,8 @@ pub fn replace_gliss() -> impl Fn(Vec<i32>, i8, u32, i8, u32) -> (Vec<i8>, Vec<u
             (
                 vec![
                     a_pitch,
-                    a_pitch + difference as i8,
-                    a_pitch + difference as i8 * 2,
+                    a_pitch + difference,
+                    a_pitch + difference * 2,
                 ],
                 vec![
                     qdur0 * interval_time,
@@ -220,11 +220,11 @@ pub fn replace_gliss() -> impl Fn(Vec<i32>, i8, u32, i8, u32) -> (Vec<i8>, Vec<u
 // to avoid a segmentation into pairs it was decided to replace only the first note; 
 // however this type of functions can be added later.
 //
-// pub fn replace_1st_takesall() -> impl Fn(Vec<i32>, i8, u32, i8, u32) -> (Vec<i8>, Vec<u32>) {
-//     |args: Vec<i32>, a_pitch: i8, a_dur: u32, b_pitch: i8, b_dur: u32| {
-//         //let interval_time = args[0] as u32;
+// pub fn replace_1st_takesall() -> impl Fn(Vec<i32>, i8, i32, i8, i32) -> (Vec<i8>, Vec<i32>) {
+//     |args: Vec<i32>, a_pitch: i8, a_dur: i32, b_pitch: i8, b_dur: i32| {
+//         //let interval_time = args[0] as i32;
 //         //let a_qdur = a_dur / interval_time;
-//         let check_dur = args[1] as u32;
+//         let check_dur = args[1] as i32;
 //         if a_dur != check_dur {
 //             (vec![a_pitch], vec![a_dur])
 //         } else {

@@ -122,8 +122,8 @@ fn write_multisequence(mseq: MultiSequence) {
                 .collect::<Vec<[i32; 2]>>();
             let mut durations = result 
                 .iter()
-                .map(|array| array[2] as u32 * interval)
-                .collect::<Vec<u32>>();
+                .map(|array| array[2] * interval)
+                .collect::<Vec<i32>>();
             let mut pitches = assign_concrete_pitches_transposing(pairs, 24, transpose);
             if sseq.check_n_replace.len() != 0 {
                 for c_n_r in sseq.check_n_replace {
@@ -151,7 +151,7 @@ fn write_multisequence(mseq: MultiSequence) {
     // then it represents the units per beat. For example, +96 would
     // mean 96 ticks per beat. If the value is negative, delta times
     // are in SMPTEpub division: i16, compatible units.
-    midipiece.division = 480; // 1 tick = 24 clocks; quarter = 480 ticks; 1/32 = 60 ticks
+    midipiece.division = 480; // 1 tick = 24 clocks; let rep_args = replace_args.clone();quarter = 480 ticks; 1/32 = 60 ticks
     let writer = SMFWriter::from_smf(midipiece);
     let path = format!("{}{}.mid", RUSTMIDI_TEST_PATH, mseq.title);
     writer.write_to_file(&Path::new(&path[..])).unwrap();
@@ -211,8 +211,8 @@ fn write_solosequence(seq: SoloSequence) {
             .collect::<Vec<[i32; 2]>>();
         let mut durations = result_triples
             .iter()
-            .map(|array| array[2] as u32 * interval)
-            .collect::<Vec<u32>>();
+            .map(|array| array[2] * interval)
+            .collect::<Vec<i32>>();
         let mut pitches = assign_concrete_pitches(pairs, 24);
         if seq.check_n_replace.len() != 0 {
             for c_n_r in seq.check_n_replace {
