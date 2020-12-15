@@ -1,5 +1,6 @@
 use crate::music_constants::*;
 use crate::solosequences::*;
+
 pub struct MultiSequence<'a> {
     pub title: &'a str,
     pub transpose: Vec<i8>,

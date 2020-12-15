@@ -8,6 +8,7 @@ use rimd::{
 mod replacing_fns;
 mod checking_fns;
 mod composite_fns;
+mod style_fns;
 mod music_constants;
 mod note_fns; use note_fns::*;
 mod solosequences; use solosequences::*;
