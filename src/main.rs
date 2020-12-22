@@ -130,6 +130,8 @@ fn write_multisequence_parallel(mseq: MultiSequence) {
         let pitches_vec_mutex_clone = Arc::clone(&pitches_vec_mutex);
         let durs_vec_mutex_clone = Arc::clone(&durs_vec_mutex);
         
+        let start = Instant::now();
+        println!("Starting Thread #{}",tr);
         children.push(thread::spawn(move || {   
             let mut pv = pitches_vec_mutex_clone.lock().unwrap();
             let mut dv = durs_vec_mutex_clone.lock().unwrap();
@@ -174,7 +176,9 @@ fn write_multisequence_parallel(mseq: MultiSequence) {
                 let _ = std::mem::replace(&mut pv[tr], pitches);
                 let _ = std::mem::replace(&mut dv[tr], durations); 
                 drop(pv);
-                drop(dv);             
+                drop(dv); 
+                let elapsed = start.elapsed();
+                println!("Thread #{} terminated in {} milliseconds", tr, elapsed.as_millis());            
             }
             
         }));
