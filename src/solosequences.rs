@@ -2,7 +2,6 @@
 use crate::checking_fns::*;
 use crate::composite_fns::*;
 use crate::replacing_fns::*;
-use crate::style_fns::*;
 
 use crate::music_constants::*;
 
@@ -17,7 +16,7 @@ pub fn get_solosequence(ss_title: &str) -> SoloSequence {
         (tremolopattern_on_interval_in_range(vec![-MIN_2, 1,90,SIXTEENTH],
             vec![SIXTEENTH,6, 12, UNISON, MIN_2, MAJ_2, MIN_3, MAJ_2,MIN_2])),   
         
-    ], tremolo_style(SIXTEENTH)]);
+    ], tremolo_style()]);
     let mut solosequences: Vec<SoloSequence> = vec![
         SoloSequence {
             title: "TremoloTEST",
@@ -40,7 +39,7 @@ pub fn get_solosequence(ss_title: &str) -> SoloSequence {
             bpm: 78,
             check_n_replace:
                 concat_c_n_r(vec![ 
-                    tremolo_style(SIXTEENTH),
+                    tremolo_style(),
                 vec![                  
                     (tremolopattern_on_interval_in_range(vec![MIN_2, 1,90,SIXTEENTH],
                         vec![SIXTEENTH,6, 12, UNISON, -MIN_2, -MAJ_2, -MIN_3, -MAJ_2,-MIN_2])),         
