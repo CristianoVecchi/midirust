@@ -64,6 +64,7 @@ fn bpm_to_microseconds(bpm: u32) -> u32 {
 /// transpositions will not be made if the value is missing).
 /// 'const RUSTMIDI_TEST_PATH' is the target directory.
 fn write_multisequence_parallel(mseq: MultiSequence) {
+    let start_h = Instant::now();
     let n_solosequences = mseq.solosequences.len();
     let mut instrument_names = vec![String::from("Globals")];
     let mut instruments = vec![];
@@ -106,6 +107,8 @@ fn write_multisequence_parallel(mseq: MultiSequence) {
         interval_times.push(sseq.interval_time);
         figures_nums.push(sseq.figures.len());
     }
+    let elapsed_h = start_h.elapsed();
+                println!("Header completed in {} milliseconds",elapsed_h.as_millis()); 
     //let data_mutex = Arc::new(Mutex::new(vec![1, 2, 3, 4]));
     
     
@@ -133,18 +136,19 @@ fn write_multisequence_parallel(mseq: MultiSequence) {
         let start = Instant::now();
         println!("Starting Thread #{}",tr);
         children.push(thread::spawn(move || {   
-            let mut pv = pitches_vec_mutex_clone.lock().unwrap();
-            let mut dv = durs_vec_mutex_clone.lock().unwrap();
+            
             let mut pitches: Vec<i8>;
             let mut durations: Vec<i32>;
             if figures_num == 0 {
                 let result = matrix2d_rnd_generator(iter, &mut xs, &mut ys);
                 pitches = assign_concrete_pitches_transposing(result, 24, transpose);
-                durations = vec![];
+                
+                let mut pv = pitches_vec_mutex_clone.lock().unwrap();
+               
                 let _ = std::mem::replace(&mut pv[tr], pitches);
-                let _ = std::mem::replace(&mut dv[tr], durations); 
+                
                 drop(pv);
-                drop(dv);
+               
             } else {
                 let result = matrix3d_rnd_generator(iter, &mut xs, &mut ys, &mut zs);
                 let pairs = result
@@ -173,6 +177,8 @@ fn write_multisequence_parallel(mseq: MultiSequence) {
                         
                     }
                 }
+                let mut pv = pitches_vec_mutex_clone.lock().unwrap();
+                let mut dv = durs_vec_mutex_clone.lock().unwrap();
                 let _ = std::mem::replace(&mut pv[tr], pitches);
                 let _ = std::mem::replace(&mut dv[tr], durations); 
                 drop(pv);
