@@ -2,6 +2,7 @@
 use crate::checking_fns::*;
 use crate::composite_fns::*;
 use crate::replacing_fns::*;
+use crate::style_fns::*;
 
 use crate::music_constants::*;
 
@@ -16,12 +17,13 @@ pub fn get_solosequence(ss_title: &str) -> SoloSequence {
         (tremolopattern_on_interval_in_range(vec![-MIN_2, 1,90,SIXTEENTH],
             vec![SIXTEENTH,6, 12, UNISON, MIN_2, MAJ_2, MIN_3, MAJ_2,MIN_2])),   
         
-    ], tremolo_style()]);
+    ], tremolo_style(SIXTEENTH)]);
     let mut solosequences: Vec<SoloSequence> = vec![
         SoloSequence {
             title: "TremoloTEST",
             instrument: 65, //PIANO // 74 = RECORDER // 65 = ALTO SAX 
             velocity: 100,
+            transpose: 0,
             abstract_notes: vec![
                 REST, UNISON, UNISON, UNISON, UNISON,MAJ_2, MAJ_2, MAJ_2, MAJ_2, MAJ_2, 
                 MIN_3, MIN_3,MIN_3,MIN_3,MIN_3,MAJ_3, P_4, P_4, P_4, P_4, 
@@ -39,7 +41,7 @@ pub fn get_solosequence(ss_title: &str) -> SoloSequence {
             bpm: 78,
             check_n_replace:
                 concat_c_n_r(vec![ 
-                    tremolo_style(),
+                    tremolo_style(SIXTEENTH),
                 vec![                  
                     (tremolopattern_on_interval_in_range(vec![MIN_2, 1,90,SIXTEENTH],
                         vec![SIXTEENTH,6, 12, UNISON, -MIN_2, -MAJ_2, -MIN_3, -MAJ_2,-MIN_2])),         
@@ -73,6 +75,7 @@ pub fn get_solosequence(ss_title: &str) -> SoloSequence {
             title: "PastoralSolo",
             instrument: 74, //74 = RECORDER
             velocity: 100,
+            transpose: 0,
             abstract_notes: vec![
                 REST, UNISON, UNISON, UNISON, UNISON,MAJ_2, MAJ_2, MAJ_2, MAJ_2, MAJ_2, 
                 MIN_3, MIN_3,MIN_3,MIN_3,MIN_3,MAJ_3, P_4, P_4, P_4, P_4, 
@@ -118,6 +121,7 @@ pub fn get_solosequence(ss_title: &str) -> SoloSequence {
             title: "TheAloneLocrio",
             instrument: 75, //74 = FLUTE
             velocity: 100,
+            transpose: 0,
             abstract_notes: 
                 [
                     &IONIAN[..],
@@ -180,6 +184,7 @@ pub fn get_solosequence(ss_title: &str) -> SoloSequence {
             title: "TheLittleLydio",
             instrument: 74,
             velocity: 100,
+            transpose: 0,
             abstract_notes: vec![
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 4, 4, 4, 4, 4, 4, 4, 5, 6, 6, 6, 6, 6,
                 7, 7, 7, 7, 7, 7, 7, 7, 8, 9, 10, 11, 11, 11, 11, 11, 11, -1, -1,
@@ -200,6 +205,7 @@ pub struct SoloSequence<'a> {
     pub title: &'a str,
     pub instrument: u8,
     pub velocity: u8,
+    pub transpose: i8,
     pub abstract_notes: Vec<i32>,
     pub octaves: Vec<i32>,
     pub figures: Vec<i32>,

@@ -8,6 +8,7 @@ use rimd::{
 mod replacing_fns;
 mod checking_fns;
 mod composite_fns;
+mod style_fns;
 mod music_constants;
 mod note_fns; use note_fns::*;
 mod solosequences; use solosequences::*;
@@ -100,7 +101,7 @@ fn write_multisequence(mseq: MultiSequence) {
         let transpose = if mseq.transpose.len() > tr {
             mseq.transpose[tr]
         } else {
-            0
+            sseq.transpose
         }; 
         if figures_num == 0 {
             let result = matrix2d_rnd_generator(sseq.iter, &mut xs, &mut ys);
@@ -163,87 +164,18 @@ fn write_multisequence(mseq: MultiSequence) {
 /// If 'figures' Vector is empty, generates a flux of notes with the same duration (interval_time).
 /// 'const RUSTMIDI_TEST_PATH' is the target directory.
 fn write_solosequence(seq: SoloSequence) {
-    let mut builder = SMFBuilder::new();
-    builder.add_track(); // header track
-    builder.add_track(); // solo instrument track
-    set_header(
-        &mut builder,
-        0,
-        Some(String::from(COPYRIGHT_NOTICE)),
-        Some(String::from(seq.title)),
-        Some(vec![
-            String::from("Globals"),
-            String::from(format!("Instr. n. = {}", seq.instrument)),
-        ]),
-        Some(bpm_to_microseconds(seq.bpm)), // micro_second (1_000_000 of a second) in a quarter note (q=60)
-        Some([4, 2, 96, 8]),                // 4/4
-        Some([0, 0]),                       // C Major
-    );
-    let volume = MidiMessage::control_change(7, 100, 0); // volume, value of volume, channel
-    let instrument = MidiMessage::program_change(seq.instrument, 0); //program, channel
-    builder.add_midi_abs(1, 0, instrument); // track, time, midimessage
-    builder.add_midi_abs(1, 0, volume);
-    let figures_num = seq.figures.len();
-    let velocity = seq.velocity;
-    let interval_time = seq.interval_time;
-    let interval = seq.interval_time;
-    let iter = seq.iter;
-    let mut xs = seq.abstract_notes;
-    let mut ys = seq.octaves;
-    let mut zs = seq.figures;
-    if figures_num == 0 { // no rhythm figures, it means a flow of notes with the same duration
-        let result_pairs = matrix2d_rnd_generator(iter, &mut xs, &mut ys);
-        let pitches = assign_concrete_pitches(result_pairs, 24); // 24 is C1, the lowest C note on the piano keyboard
-        add_notes(
-            &mut builder,
-            1,
-            0,
-            pitches,
-            velocity,
-            0,
-            interval_time,
-        ); 
-    } else {
-        let result_triples = matrix3d_rnd_generator(iter, &mut xs, &mut ys, &mut zs);
-        let pairs = result_triples
-            .iter()
-            .map(|array| [array[0], array[1]])
-            .collect::<Vec<[i32; 2]>>();
-        let mut durations = result_triples
-            .iter()
-            .map(|array| array[2] * interval)
-            .collect::<Vec<i32>>();
-        let mut pitches = assign_concrete_pitches(pairs, 24);
-        if seq.check_n_replace.len() != 0 {
-            for c_n_r in seq.check_n_replace {
-                let check_fn = c_n_r.0.0;
-                let replace_fn = c_n_r.1.0;
-                let check_args = c_n_r.0.1;
-                let replace_args = c_n_r.1.1;
-                replace_by_closures(
-                    &mut pitches,
-                    &mut durations,
-                    check_fn,
-                    check_args,
-                    replace_fn,
-                    replace_args,
-                );
-                
-            }
-        }
-        add_notes_and_durations(&mut builder, 1, 0, pitches, velocity, 0, durations);
-        
+    let ms = MultiSequence {
+        title: &seq.title[..],
+        transpose: vec![],
+        instruments: vec![], 
+        velocities: vec![],
+        interval_time: seq.interval_time,
+        bpm: seq.bpm,
+        solosequences: vec![
+            seq,
+        ],
     };
-    let mut midipiece = builder.result();
-    // The unit of time for delta timing. If the value is positive,
-    // then it represents the units per beat. For example, +96 would
-    // mean 96 ticks per beat. If the value is negative, delta times
-    // are in SMPTEpub division: i16, compatible units.
-    midipiece.division = 480; // 1 tick = 24 clocks; quarter = 480 ticks
-    let writer = SMFWriter::from_smf(midipiece);
-    let path = format!("{}{}.mid", RUSTMIDI_TEST_PATH, seq.title);
-    writer.write_to_file(&Path::new(&path[..])).unwrap();
-    //read_file(&path[..]);
+    write_multisequence(ms);
 }
 
 
