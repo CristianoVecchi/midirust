@@ -23,7 +23,7 @@ pub fn get_solosequence(ss_title: &str) -> SoloSequence {
             title: "TremoloTEST",
             instrument: 65, //PIANO // 74 = RECORDER // 65 = ALTO SAX 
             velocity: 100,
-            transpose: 0,
+            transpose: 24,
             abstract_notes: vec![
                 REST, UNISON, UNISON, UNISON, UNISON,MAJ_2, MAJ_2, MAJ_2, MAJ_2, MAJ_2, 
                 MIN_3, MIN_3,MIN_3,MIN_3,MIN_3,MAJ_3, P_4, P_4, P_4, P_4, 
@@ -214,9 +214,9 @@ pub struct SoloSequence<'a> {
     pub bpm: u32,
     pub check_n_replace: Vec<(
         // a vector filled by tuples with (a (check closure + args) and a (replace closure + args) )
-        (Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> bool>, Vec<i32>),
+        (Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> bool + Send>, Vec<i32>),
         (
-            Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> (Vec<i8>, Vec<i32>)>,
+            Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> (Vec<i8>, Vec<i32>) + Send>,
             Vec<i32>,
         ),
     )>,

@@ -7,9 +7,9 @@ use crate::music_constants::*;
 /// # Arguments 
 /// interval_time 
 pub fn tremolo_style(interval_time: i32) -> Vec<(
-    (Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> bool>, Vec<i32>),
+    (Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> bool + Send>, Vec<i32>),
     (
-        Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> (Vec<i8>, Vec<i32>)>,
+        Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> (Vec<i8>, Vec<i32>) + Send>,
         Vec<i32>,
     ),
 )>{
@@ -32,17 +32,17 @@ pub fn tremolo_style(interval_time: i32) -> Vec<(
 pub fn concat_c_n_r(
     vector: Vec<Vec<
     (
-        (Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> bool>, Vec<i32>),
+        (Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> bool + Send>, Vec<i32>),
         (
-            Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> (Vec<i8>, Vec<i32>)>,
+            Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> (Vec<i8>, Vec<i32>) + Send>,
             Vec<i32>,
         ),
     )>>
 ) -> Vec<
     (
-        (Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> bool>, Vec<i32>),
+        (Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> bool + Send>, Vec<i32>),
         (
-            Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> (Vec<i8>, Vec<i32>)>,
+            Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> (Vec<i8>, Vec<i32>) + Send>,
             Vec<i32>,
         ),
     )

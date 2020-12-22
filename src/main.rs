@@ -4,6 +4,10 @@ use rimd::{
     MidiMessage, SMFBuilder, SMFError, SMFFormat,
     SMFWriter, Track, TrackEvent, SMF,
 };
+use std::thread;
+//use std::rc::Rc;
+use std::sync::{Arc, Mutex};
+
 
 mod replacing_fns;
 mod checking_fns;
@@ -33,13 +37,17 @@ const _BACH_INVENTIO1: &str = "/home/cris/Desktop/bach_inventio1.mid";
 fn main() {
     let start = Instant::now();
     //let solosequence = "TheAloneLocrio";
-    let solosequence = "TremoloTEST";
-    write_solosequence(get_solosequence(solosequence));
-    //let multisequence = "Pastoral";
-    //write_multisequence(get_multisequence(multisequence));
-   
+    // let solosequence = "TremoloTEST";
+    // write_solosequence(get_solosequence(solosequence));
+    let multisequence = "Pastoral";
+    write_multisequence(get_multisequence(multisequence));
     let elapsed = start.elapsed();
     println!("Midifile created in {} milliseconds", elapsed.as_millis());
+
+    let start2 = Instant::now();
+    write_multisequence_parallel(get_multisequence(multisequence));
+    let elapsed2 = start2.elapsed();
+    println!("Midifile parallel created in {} milliseconds", elapsed2.as_millis());
 }
 /// 1_000_000 microseconds == 1 second
 /// # Arguments
@@ -55,6 +63,187 @@ fn bpm_to_microseconds(bpm: u32) -> u32 {
 /// override the SoloSequence ones (intruments, velocities, bpm, title, interval_time,
 /// transpositions will not be made if the value is missing).
 /// 'const RUSTMIDI_TEST_PATH' is the target directory.
+fn write_multisequence_parallel(mseq: MultiSequence) {
+    let n_solosequences = mseq.solosequences.len();
+    let mut instrument_names = vec![String::from("Globals")];
+    let mut instruments = vec![];
+    let mut velocities = vec![];
+    let mut transpositions = vec![];
+    let mut interval_times = vec![];
+    let mut figures_nums = vec![];
+    let pitches_vec: Vec<Vec<i8>>= vec![];
+    let durs_vec: Vec<Vec<i32>>= vec![];
+    let pitches_vec_mutex = Arc::new(Mutex::new(pitches_vec));
+    let durs_vec_mutex = Arc::new(Mutex::new(durs_vec));
+    let pitches_vec_mutex_clone = Arc::clone(&pitches_vec_mutex);
+    let durs_vec_mutex_clone = Arc::clone(&durs_vec_mutex);
+    for tr in 0..mseq.solosequences.len(){
+       
+        let mut pv = pitches_vec_mutex_clone.lock().unwrap();
+        pv.push(vec![]);
+       
+        let mut dv = durs_vec_mutex_clone.lock().unwrap();
+        dv.push(vec![]);
+        drop(pv);
+        drop(dv);
+        let sseq = &mseq.solosequences[tr];
+        instrument_names.push(String::from(format!("Instr. n. = {}", mseq.solosequences[tr].instrument)));
+        if mseq.instruments.len() > tr {
+            instruments.push(MidiMessage::program_change(mseq.instruments[tr], tr as u8))//program, channel
+        } else {
+            instruments.push(MidiMessage::program_change(sseq.instrument, tr as u8)) //program, channel
+        };  
+        if mseq.velocities.len() > tr {
+            velocities.push(mseq.velocities[tr]);
+        } else {
+            velocities.push(sseq.velocity);
+        }; 
+        if mseq.transpose.len() > tr {
+            transpositions.push(mseq.transpose[tr]);
+        } else {
+            transpositions.push(sseq.transpose);
+        }
+        interval_times.push(sseq.interval_time);
+        figures_nums.push(sseq.figures.len());
+    }
+    //let data_mutex = Arc::new(Mutex::new(vec![1, 2, 3, 4]));
+    
+    
+    let mut solosequences = mseq.solosequences;
+    let mut children = vec![];
+
+    
+    
+    for tr in 0..n_solosequences{
+        let sseq = solosequences.remove(0);
+        let figures_num = figures_nums[tr];
+        let interval = interval_times[tr];
+        let transpose = transpositions[tr];
+        let iter = sseq.iter;
+        let mut xs = sseq.abstract_notes;
+        let mut ys = sseq.octaves;
+        let mut zs = sseq.figures; 
+        
+        
+        let c_n_r_len = sseq.check_n_replace.len();
+        let check_n_replace_fns = sseq.check_n_replace;        
+        let pitches_vec_mutex_clone = Arc::clone(&pitches_vec_mutex);
+        let durs_vec_mutex_clone = Arc::clone(&durs_vec_mutex);
+        
+        children.push(thread::spawn(move || {   
+            let mut pv = pitches_vec_mutex_clone.lock().unwrap();
+            let mut dv = durs_vec_mutex_clone.lock().unwrap();
+            let mut pitches: Vec<i8>;
+            let mut durations: Vec<i32>;
+            if figures_num == 0 {
+                let result = matrix2d_rnd_generator(iter, &mut xs, &mut ys);
+                pitches = assign_concrete_pitches_transposing(result, 24, transpose);
+                durations = vec![];
+                let _ = std::mem::replace(&mut pv[tr], pitches);
+                let _ = std::mem::replace(&mut dv[tr], durations); 
+                drop(pv);
+                drop(dv);
+            } else {
+                let result = matrix3d_rnd_generator(iter, &mut xs, &mut ys, &mut zs);
+                let pairs = result
+                    .iter()
+                    .map(|array| [array[0], array[1]])
+                    .collect::<Vec<[i32; 2]>>();
+                durations = result 
+                    .iter()
+                    .map(|array| array[2] * interval)
+                    .collect::<Vec<i32>>();
+                pitches = assign_concrete_pitches_transposing(pairs, 24, transpose);
+                if c_n_r_len != 0 {
+                    for c_n_r in check_n_replace_fns {
+                        let check_fn = c_n_r.0.0;
+                        let replace_fn = c_n_r.1.0;
+                        let check_args = c_n_r.0.1;
+                        let replace_args = c_n_r.1.1;
+                        replace_by_closures(
+                            &mut pitches,
+                            &mut durations,
+                            check_fn,
+                            check_args,
+                            replace_fn,
+                            replace_args,
+                        );
+                        
+                    }
+                }
+                let _ = std::mem::replace(&mut pv[tr], pitches);
+                let _ = std::mem::replace(&mut dv[tr], durations); 
+                drop(pv);
+                drop(dv);             
+            }
+            
+        }));
+        
+    }
+
+    for child in children {
+        // Wait for the thread to finish. Returns a result.
+        let _ = child.join();
+    }
+    let mut builder = SMFBuilder::new();
+    builder.add_track();
+    set_header(
+        &mut builder,
+        0,
+        Some(String::from(COPYRIGHT_NOTICE)),
+        Some(String::from(mseq.title)),
+        Some(instrument_names),
+        Some(bpm_to_microseconds(mseq.bpm)), // micro_second (1_000_000 of a second) in a quarter note (q=60)
+        Some([4, 2, 96, 8]),                // 4/4
+        Some([0, 0]),                       // C Major
+    );
+
+    // let pitches_vec_mutex_clone = Arc::clone(&pitches_vec_mutex);
+    // let durs_vec_mutex_clone = Arc::clone(&durs_vec_mutex);
+    for tr in 0..n_solosequences {
+        builder.add_track();
+        let instrument = instruments.remove(0);
+        
+        let mut pv = pitches_vec_mutex_clone.lock().unwrap();
+        
+        let mut dv = durs_vec_mutex_clone.lock().unwrap();
+        let pitches = pv.remove(0);
+        let durations = dv.remove(0);
+        drop(pv);
+        drop(dv);
+        let volume = MidiMessage::control_change(7, 90, tr as u8); // volume, value of volume, channel
+          
+        builder.add_midi_abs(tr+1, 0, instrument); // track, time, midimessage
+        builder.add_midi_abs(tr+1, 0, volume);
+        if figures_nums[tr] == 0 {
+            add_notes(
+                &mut builder,
+                1,
+                0,
+                pitches,
+                velocities[tr],
+                0,
+                interval_times[tr],
+            ); // 480 = 1/4, 60 = 1/32
+        } else {
+            add_notes_and_durations(&mut builder, tr + 1, 0, pitches, velocities[tr], tr as u8, durations);
+        }
+        
+    }
+        
+    let mut midipiece = builder.result();
+    // The unit of time for delta timing. If the value is positive,
+    // then it represents the units per beat. For example, +96 would
+    // mean 96 ticks per beat. If the value is negative, delta times
+    // are in SMPTEpub division: i16, compatible units.
+    midipiece.division = 480; // 1 tick = 24 clocks; let rep_args = replace_args.clone();quarter = 480 ticks; 1/32 = 60 ticks
+    let writer = SMFWriter::from_smf(midipiece);
+    let path = format!("{}{}_par.mid", RUSTMIDI_TEST_PATH, mseq.title);
+    writer.write_to_file(&Path::new(&path[..])).unwrap();
+    //read_file(&path[..]);
+      
+
+}
 fn write_multisequence(mseq: MultiSequence) {
     let n_solosequences = mseq.solosequences.len();
     let mut instrument_names = vec![String::from("Globals")];
@@ -193,6 +382,7 @@ fn write_multisequence(mseq: MultiSequence) {
       
 
 }
+
 
 /// Creates a MidiFile with Track 0 as Header, Tracks 1 as Solo Instrument on channel 0.
 /// If 'figures' Vector is empty, generates a flux of notes with the same duration (interval_time).

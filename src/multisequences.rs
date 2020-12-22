@@ -22,6 +22,7 @@ pub fn get_multisequence(ms_title: &str) -> MultiSequence {
             get_solosequence("PastoralSolo"),
             get_solosequence("PastoralSolo"),
             get_solosequence("PastoralSolo"),
+            
         ],
     }];
     multisequences.retain(|ms| ms.title == ms_title);
