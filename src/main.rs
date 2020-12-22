@@ -56,67 +56,59 @@ fn bpm_to_microseconds(bpm: u32) -> u32 {
 /// transpositions will not be made if the value is missing).
 /// 'const RUSTMIDI_TEST_PATH' is the target directory.
 fn write_multisequence(mseq: MultiSequence) {
-    let mut builder = SMFBuilder::new();
-    builder.add_track();
-    let mut instrument_names = vec![String::from("Globals")];
-    for i in 0..mseq.solosequences.len(){
-        instrument_names.push(String::from(format!("Instr. n. = {}", mseq.solosequences[i].instrument)));
-    }
-
-    set_header(
-        &mut builder,
-        0,
-        Some(String::from(COPYRIGHT_NOTICE)),
-        Some(String::from(mseq.title)),
-        Some(instrument_names),
-        Some(bpm_to_microseconds(mseq.bpm)), // micro_second (1_000_000 of a second) in a quarter note (q=60)
-        Some([4, 2, 96, 8]),                // 4/4
-        Some([0, 0]),                       // C Major
-    );
     let n_solosequences = mseq.solosequences.len();
+    let mut instrument_names = vec![String::from("Globals")];
+    let mut instruments = vec![];
+    let mut velocities = vec![];
+    let mut transpositions = vec![];
+    let mut interval_times = vec![];
+    let mut figures_nums = vec![];
+    let mut pitches_vec = vec![];
+    let mut durs_vec: Vec<Vec<i32>>= vec![];
+    for tr in 0..mseq.solosequences.len(){
+        let sseq = &mseq.solosequences[tr];
+        instrument_names.push(String::from(format!("Instr. n. = {}", mseq.solosequences[tr].instrument)));
+        if mseq.instruments.len() > tr {
+            instruments.push(MidiMessage::program_change(mseq.instruments[tr], tr as u8))//program, channel
+        } else {
+            instruments.push(MidiMessage::program_change(sseq.instrument, tr as u8)) //program, channel
+        };  
+        if mseq.velocities.len() > tr {
+            velocities.push(mseq.velocities[tr]);
+        } else {
+            velocities.push(sseq.velocity);
+        }; 
+        if mseq.transpose.len() > tr {
+            transpositions.push(mseq.transpose[tr]);
+        } else {
+            transpositions.push(sseq.transpose);
+        }
+        interval_times.push(sseq.interval_time);
+        figures_nums.push(sseq.figures.len());
+    }
+    
+    
     let mut solosequences = mseq.solosequences;
     
-    for tr in 0..n_solosequences{
-        builder.add_track();
+    for tr in 0..n_solosequences{   
         let sseq = solosequences.remove(0);
-        let volume = MidiMessage::control_change(7, 90, tr as u8); // volume, value of volume, channel
-        let instrument = if mseq.instruments.len() > tr {
-            MidiMessage::program_change(mseq.instruments[tr], tr as u8) //program, channel
-        } else {
-            MidiMessage::program_change(sseq.instrument, tr as u8) //program, channel
-        };    
-        builder.add_midi_abs(tr+1, 0, instrument); // track, time, midimessage
-        builder.add_midi_abs(tr+1, 0, volume);
-        
-        let figures_num = sseq.figures.len();
-        let interval = mseq.interval_time;
+        let figures_num = figures_nums[tr];
+        let interval = interval_times[tr];
+        let transpose = transpositions[tr];
+        let iter = sseq.iter;
         let mut xs = sseq.abstract_notes;
         let mut ys = sseq.octaves;
-        let mut zs = sseq.figures;
-        let velocity = if mseq.velocities.len() > tr {
-            mseq.velocities[tr]
-        } else {
-            sseq.velocity
-        }; 
-        let transpose = if mseq.transpose.len() > tr {
-            mseq.transpose[tr]
-        } else {
-            sseq.transpose
-        }; 
+        let mut zs = sseq.figures; 
+
+        let c_n_r_len = sseq.check_n_replace.len();
+        let check_n_replace_fns = sseq.check_n_replace;
         if figures_num == 0 {
-            let result = matrix2d_rnd_generator(sseq.iter, &mut xs, &mut ys);
+            let result = matrix2d_rnd_generator(iter, &mut xs, &mut ys);
             let pitches = assign_concrete_pitches_transposing(result, 24, transpose);
-            add_notes(
-                &mut builder,
-                1,
-                0,
-                pitches,
-                velocity,
-                0,
-                interval,
-            ); // 480 = 1/4, 60 = 1/32
+            pitches_vec.push(pitches);
+            durs_vec.push(vec![]);     
         } else {
-            let result = matrix3d_rnd_generator(sseq.iter, &mut xs, &mut ys, &mut zs);
+            let result = matrix3d_rnd_generator(iter, &mut xs, &mut ys, &mut zs);
             let pairs = result
                 .iter()
                 .map(|array| [array[0], array[1]])
@@ -126,8 +118,8 @@ fn write_multisequence(mseq: MultiSequence) {
                 .map(|array| array[2] * interval)
                 .collect::<Vec<i32>>();
             let mut pitches = assign_concrete_pitches_transposing(pairs, 24, transpose);
-            if sseq.check_n_replace.len() != 0 {
-                for c_n_r in sseq.check_n_replace {
+            if c_n_r_len != 0 {
+                for c_n_r in check_n_replace_fns {
                     let check_fn = c_n_r.0.0;
                     let replace_fn = c_n_r.1.0;
                     let check_args = c_n_r.0.1;
@@ -143,10 +135,51 @@ fn write_multisequence(mseq: MultiSequence) {
                     
                 }
             }
-            add_notes_and_durations(&mut builder, tr + 1, 0, pitches, velocity, tr as u8, durations);
+            pitches_vec.push(pitches);
+            durs_vec.push(durations);
+           
+            
         }
-       
     }
+    let mut builder = SMFBuilder::new();
+    builder.add_track();
+    set_header(
+        &mut builder,
+        0,
+        Some(String::from(COPYRIGHT_NOTICE)),
+        Some(String::from(mseq.title)),
+        Some(instrument_names),
+        Some(bpm_to_microseconds(mseq.bpm)), // micro_second (1_000_000 of a second) in a quarter note (q=60)
+        Some([4, 2, 96, 8]),                // 4/4
+        Some([0, 0]),                       // C Major
+    );
+
+       
+    for tr in 0..n_solosequences {
+        builder.add_track();
+        let instrument = instruments.remove(0);
+        let pitches = pitches_vec.remove(0);
+        let durations = durs_vec.remove(0);
+        let volume = MidiMessage::control_change(7, 90, tr as u8); // volume, value of volume, channel
+          
+        builder.add_midi_abs(tr+1, 0, instrument); // track, time, midimessage
+        builder.add_midi_abs(tr+1, 0, volume);
+        if figures_nums[tr] == 0 {
+            add_notes(
+                &mut builder,
+                1,
+                0,
+                pitches,
+                velocities[tr],
+                0,
+                interval_times[tr],
+            ); // 480 = 1/4, 60 = 1/32
+        } else {
+            add_notes_and_durations(&mut builder, tr + 1, 0, pitches, velocities[tr], tr as u8, durations);
+        }
+        
+    }
+        
     let mut midipiece = builder.result();
     // The unit of time for delta timing. If the value is positive,
     // then it represents the units per beat. For example, +96 would
@@ -157,6 +190,7 @@ fn write_multisequence(mseq: MultiSequence) {
     let path = format!("{}{}.mid", RUSTMIDI_TEST_PATH, mseq.title);
     writer.write_to_file(&Path::new(&path[..])).unwrap();
     //read_file(&path[..]);
+      
 
 }
 
