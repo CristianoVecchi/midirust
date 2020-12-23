@@ -6,13 +6,7 @@ use crate::music_constants::*;
 
 /// # Arguments 
 /// interval_time 
-pub fn tremolo_style(interval_time: i32) -> Vec<(
-    (Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> bool + Send>, Vec<i32>),
-    (
-        Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> (Vec<i8>, Vec<i32>) + Send>,
-        Vec<i32>,
-    ),
-)>{
+pub fn tremolo_style(interval_time: i32) -> Vec< ( (Box<Check>, Vec<i32>), (Box<Replace>, Vec<i32>) ) >{
     vec![(tremolo_on_interval(vec![MAJ_2, interval_time],vec![interval_time,4, 6 ])),
                 (tremolo_on_interval(vec![-MAJ_2, interval_time],vec![interval_time,4, 6 ])),
                 (tremolo_on_interval(vec![MAJ_3, interval_time],vec![interval_time,3, 3 ])), // triplet tremolo
@@ -30,23 +24,8 @@ pub fn tremolo_style(interval_time: i32) -> Vec<(
 /// a Vector of Vectors of 'check and replace' functions (2 tuples in 1 tuple), 
 /// can be filled with composite functions or style functions, returns a flat Vector
 pub fn concat_c_n_r(
-    vector: Vec<Vec<
-    (
-        (Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> bool + Send>, Vec<i32>),
-        (
-            Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> (Vec<i8>, Vec<i32>) + Send>,
-            Vec<i32>,
-        ),
-    )>>
-) -> Vec<
-    (
-        (Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> bool + Send>, Vec<i32>),
-        (
-            Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> (Vec<i8>, Vec<i32>) + Send>,
-            Vec<i32>,
-        ),
-    )
->{
+    vector: Vec<Vec<( (Box<Check>, Vec<i32>), (Box<Replace>, Vec<i32>) ) >>
+) -> Vec<( (Box<Check>, Vec<i32>), (Box<Replace>, Vec<i32>) ) >{
     let mut finalvector = vec![];
     
     let mut vector = vector;

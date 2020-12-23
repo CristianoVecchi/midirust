@@ -214,10 +214,7 @@ pub struct SoloSequence<'a> {
     pub bpm: u32,
     pub check_n_replace: Vec<(
         // a vector filled by tuples with (a (check closure + args) and a (replace closure + args) )
-        (Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> bool + Send>, Vec<i32>),
-        (
-            Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> (Vec<i8>, Vec<i32>) + Send>,
-            Vec<i32>,
-        ),
+        (Box<Check>, Vec<i32>),
+        (Box<Replace>,Vec<i32>,),
     )>,
 }

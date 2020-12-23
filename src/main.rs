@@ -24,6 +24,7 @@ use std::time::Instant;
 const COPYRIGHT_NOTICE: &str = "Copyright (c) 2020 Cristiano Vecchi";
 /// the target PATH where the midi file will be created
 const RUSTMIDI_TEST_PATH: &str = "/home/cris/Desktop/";
+//const RUSTMIDI_TEST_PATH: &str = "C:\\Users\\Cristiano\\Desktop\\"; //Win
 const _RUSTMIDI_TEST: &str = "/home/cris/Desktop/RUSTMIDI_TEST.MID";
 const _SINGLE_NOTE: &str = "/home/cris/Desktop/singleNote.mid";
 const _BACH_BRAND1: &str = "/home/cris/Desktop/BACH_BRAND1.mid";

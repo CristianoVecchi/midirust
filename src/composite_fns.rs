@@ -1,6 +1,8 @@
 use crate::checking_fns::*;
 use crate::replacing_fns::*;
 
+pub type Check = dyn Fn(Vec<i32>, i8, i32, i8, i32) -> bool + Send;
+pub type Replace = dyn Fn(Vec<i32>, i8, i32, i8, i32) -> (Vec<i8>, Vec<i32>) + Send;
 /// # Arguments in Vectors
 /// Check Args: interval, lower_limit, upper_limit, interval_time -------
 /// Replace Args: interval_time, num_repetitions (in a interval_time),  
@@ -9,13 +11,8 @@ use crate::replacing_fns::*;
 pub fn tremolopattern_on_interval_in_range(
     check_args: Vec<i32>,
     replace_args: Vec<i32>,
-) -> (
-    (Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> bool + Send>, Vec<i32>),
-    (
-        Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> (Vec<i8>, Vec<i32>) + Send>,
-        Vec<i32>,
-    ),
-) {
+) -> ( (Box<Check>, Vec<i32>), (Box<Replace>, Vec<i32>) ) 
+ {
     (
         (Box::new(check_interval_in_range_and_duration()), check_args),
         (Box::new(replace_tremolopattern()), replace_args),
@@ -29,13 +26,7 @@ pub fn tremolopattern_on_interval_in_range(
 pub fn tremolo_on_interval(
     check_args: Vec<i32>,
     replace_args: Vec<i32>,
-) -> (
-    (Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> bool + Send>, Vec<i32>),
-    (
-        Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> (Vec<i8>, Vec<i32>) + Send>,
-        Vec<i32>,
-    ),
-) {
+) -> ( (Box<Check>, Vec<i32>), (Box<Replace>, Vec<i32>)) {
     (
         (Box::new(check_interval_and_duration()), check_args),
         (Box::new(replace_tremolo()), replace_args),
@@ -48,13 +39,8 @@ pub fn tremolo_on_interval(
 pub fn gliss_on_interval(
     check_args: Vec<i32>,
     replace_args: Vec<i32>,
-) -> (
-    (Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> bool + Send>, Vec<i32>),
-    (
-        Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> (Vec<i8>, Vec<i32>) + Send>,
-        Vec<i32>,
-    ),
-) {
+) -> ( (Box<Check>, Vec<i32>), (Box<Replace>, Vec<i32>) ) 
+{
     (
         (Box::new(check_interval()), check_args),
         (Box::new(replace_gliss()), replace_args),
@@ -67,13 +53,7 @@ pub fn gliss_on_interval(
 pub fn group_on_interval_in_range(
     check_args: Vec<i32>,
     replace_args: Vec<i32>,
-) -> (
-    (Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> bool + Send>, Vec<i32>),
-    (
-        Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> (Vec<i8>, Vec<i32>) + Send>,
-        Vec<i32>,
-    ),
-) {
+) -> ( (Box<Check>, Vec<i32>), (Box<Replace>, Vec<i32>) ) {
     (
         (Box::new(check_interval_in_range_and_duration()), check_args),
         (Box::new(replace_group()), replace_args),
@@ -86,13 +66,7 @@ pub fn group_on_interval_in_range(
 pub fn trill_on_interval(
     check_args: Vec<i32>,
     replace_args: Vec<i32>,
-) -> (
-    (Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> bool + Send>, Vec<i32>),
-    (
-        Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> (Vec<i8>, Vec<i32>) + Send>,
-        Vec<i32>,
-    ),
-) {
+) -> ( (Box<Check>, Vec<i32>), (Box<Replace>, Vec<i32>) )  {
     (
         (Box::new(check_interval_and_duration()), check_args),
         (Box::new(replace_trill()), replace_args),
@@ -105,13 +79,8 @@ pub fn trill_on_interval(
 pub fn gracenote_on_interval(
     check_args: Vec<i32>,
     replace_args: Vec<i32>,
-) -> (
-    (Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> bool + Send>, Vec<i32>),
-    (
-        Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> (Vec<i8>, Vec<i32>) + Send>,
-        Vec<i32>,
-    ),
-) {
+) -> ( (Box<Check>, Vec<i32>), (Box<Replace>, Vec<i32>) ) 
+{
     (
         (Box::new(check_interval_and_duration()), check_args),
         (Box::new(replace_gracenote()), replace_args),
@@ -123,13 +92,7 @@ pub fn gracenote_on_interval(
 pub fn approachgliss_on_interval(
     check_args: Vec<i32>,
     replace_args: Vec<i32>,
-) -> (
-    (Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> bool + Send>, Vec<i32>),
-    (
-        Box<dyn Fn(Vec<i32>, i8, i32, i8, i32) -> (Vec<i8>, Vec<i32>) + Send>,
-        Vec<i32>,
-    ),
-) {
+) -> ( (Box<Check>, Vec<i32>), (Box<Replace>, Vec<i32>) )  {
     (
         (Box::new(check_interval_and_duration()), check_args),
         (Box::new(replace_approachgliss()), replace_args),
